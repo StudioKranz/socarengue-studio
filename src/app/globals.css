@@ -53,6 +53,13 @@ a {
   text-decoration: none;
 }
 
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
 ::selection {
   background: rgba(214, 163, 74, 0.35);
 }

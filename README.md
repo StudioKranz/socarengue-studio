@@ -93,16 +93,39 @@ socarengue-studio/
   types/
 ```
 
+## Clean Preview Routine
+
+Use this routine before showing the prototype to collaborators:
+
+```bash
+# Stop any running `pnpm dev` process first.
+PATH=/Users/apple/Library/pnpm:$PATH /Users/apple/Library/pnpm/pnpm typecheck
+PATH=/Users/apple/Library/pnpm:$PATH /Users/apple/Library/pnpm/pnpm build
+PATH=/Users/apple/Library/pnpm:$PATH /Users/apple/Library/pnpm/pnpm dev
+```
+
+Then open:
+
+- `http://localhost:3000/`
+- `http://localhost:3000/studio`
+- `http://localhost:3000/studio/issues/the-street-remembers`
+- `http://localhost:3000/archive`
+- `http://localhost:3000/reader/rain-signal`
+
+Do not run `next build` while the dev server is active; restart the dev server after a production build so the local preview uses a clean `.next` manifest.
+
 ## Current Status
 
-Phase: foundational planning.
+Phase: first seed-data prototype.
 
-Next recommended step: scaffold a minimal Next.js prototype with typed seed content only after these docs are approved.
+Current implementation uses local typed seed data only. Supabase remains the preferred future persistence layer, but it is not connected yet.
 
-The first implementation task should be:
+The prototype currently includes:
 
-- create the Next.js, TypeScript, and Tailwind foundation
-- add typed domain models for the MVP objects
-- add one hardcoded Socarengue seed project
-- render a studio overview and one public release/reader path from seed data
-- avoid Supabase connections, auth, GitHub sync, payments, comments, and social mechanics in the first prototype
+- Next.js, TypeScript, and Tailwind foundation
+- typed domain models for the MVP objects
+- one hardcoded Socarengue seed project
+- landing, studio overview, issue detail, archive, and scene reader routes
+- soundtrack cue component
+- Supabase-ready query helper boundary using local seed data
+- no Supabase connection, auth, editing, payments, comments, or external APIs

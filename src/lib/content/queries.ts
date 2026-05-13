@@ -40,6 +40,10 @@ export function getSceneBySlug(slug: string): Scene | undefined {
   return socarengueSeed.scenes.find((scene) => scene.slug === slug);
 }
 
+export function getSceneById(id: string): Scene | undefined {
+  return socarengueSeed.scenes.find((scene) => scene.id === id);
+}
+
 export function getPublicArtifacts(): Artifact[] {
   return socarengueSeed.artifacts.filter((artifact) => publicVisibility.includes(artifact.visibility));
 }

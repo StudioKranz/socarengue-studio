@@ -4,6 +4,7 @@ import { ArchiveNav } from "@/components/navigation/archive-nav";
 import { SoundtrackCueCard } from "@/components/reader/soundtrack-cue";
 import { SignalFrame } from "@/components/ui/signal-frame";
 import { MetadataLine } from "@/components/ui/metadata-line";
+import { EmptyState } from "@/components/ui/empty-state";
 import {
   getArtifactsByIds,
   getCharactersByIds,
@@ -50,30 +51,42 @@ export default async function IssueDetailPage({ params }: IssueDetailPageProps) 
 
         <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
           <div className="space-y-4">
-            {scenes.map((scene) => (
-              <Link
-                href={`/reader/${scene.slug}`}
-                key={scene.id}
-                className="block rounded-[6px] border border-paper/12 bg-ink/50 p-6 transition hover:border-signal/40 hover:bg-signal/5"
-              >
-                <MetadataLine label={`Scene ${scene.sequenceIndex}`} value={scene.emotionalBeat} />
-                <h2 className="mt-3 font-display text-3xl text-paper">{scene.title}</h2>
-                <p className="mt-3 text-sm leading-6 text-paper/64">{scene.summary}</p>
-              </Link>
-            ))}
+            {scenes.length > 0 ? (
+              scenes.map((scene) => (
+                <Link
+                  href={`/reader/${scene.slug}`}
+                  key={scene.id}
+                  className="block rounded-[6px] border border-paper/12 bg-ink/50 p-6 transition hover:border-signal/40 hover:bg-signal/5"
+                >
+                  <MetadataLine label={`Scene ${scene.sequenceIndex}`} value={scene.emotionalBeat} />
+                  <h2 className="mt-3 font-display text-3xl text-paper">{scene.title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-paper/64">{scene.summary}</p>
+                </Link>
+              ))
+            ) : (
+              <EmptyState
+                title="This issue has no sequenced scenes yet."
+                detail="Scene records will appear here once the transmission has a reading order."
+              />
+            )}
           </div>
 
           <aside className="space-y-4">
             <div className="rounded-[6px] border border-paper/12 bg-ink/45 p-5">
-              <MetadataLine label="Connected" value="story graph" />
+              <MetadataLine label="Linked resonance" value="archive inventory" />
               <p className="mt-4 text-sm leading-6 text-paper/65">
                 {characters.length} characters, {artifacts.length} artifacts, {lore.length} lore entries,{" "}
                 {media.length} media records.
               </p>
             </div>
-            {cues.slice(0, 2).map((cue) => (
-              <SoundtrackCueCard key={cue.id} cue={cue} />
-            ))}
+            {cues.length > 0 ? (
+              cues.slice(0, 2).map((cue) => <SoundtrackCueCard key={cue.id} cue={cue} />)
+            ) : (
+              <EmptyState
+                title="No soundtrack cues are tuned."
+                detail="Music instructions will surface here when this issue receives listening layers."
+              />
+            )}
           </aside>
         </div>
       </section>

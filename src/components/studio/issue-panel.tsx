@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Issue, Scene } from "@/types/content";
 import { MetadataLine } from "@/components/ui/metadata-line";
+import { EmptyState } from "@/components/ui/empty-state";
 
 interface IssuePanelProps {
   issue: Issue;
@@ -14,19 +15,26 @@ export function IssuePanel({ issue, scenes }: IssuePanelProps) {
       <h2 className="mt-3 font-display text-3xl text-paper">{issue.title}</h2>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-paper/70">{issue.summary}</p>
       <div className="mt-6 space-y-3">
-        {scenes.map((scene) => (
-          <Link
-            href={`/reader/${scene.slug}`}
-            key={scene.id}
-            className="block border-l border-signal/30 bg-signal/5 px-4 py-3 transition hover:border-ember hover:bg-ember/5"
-          >
-            <span className="text-xs uppercase tracking-[0.22em] text-signal/80">
-              Scene {String(scene.sequenceIndex).padStart(2, "0")}
-            </span>
-            <p className="mt-1 font-display text-xl text-paper">{scene.title}</p>
-            <p className="mt-1 text-sm text-paper/60">{scene.emotionalBeat}</p>
-          </Link>
-        ))}
+        {scenes.length > 0 ? (
+          scenes.map((scene) => (
+            <Link
+              href={`/reader/${scene.slug}`}
+              key={scene.id}
+              className="block border-l border-signal/30 bg-signal/5 px-4 py-3 transition hover:border-ember hover:bg-ember/5"
+            >
+              <span className="text-xs uppercase tracking-[0.22em] text-signal/80">
+                Scene {String(scene.sequenceIndex).padStart(2, "0")}
+              </span>
+              <p className="mt-1 font-display text-xl text-paper">{scene.title}</p>
+              <p className="mt-1 text-sm text-paper/60">{scene.emotionalBeat}</p>
+            </Link>
+          ))
+        ) : (
+          <EmptyState
+            title="No scene signals are sequenced yet."
+            detail="When this issue receives scenes, they will appear here as a reading order."
+          />
+        )}
       </div>
       <Link
         href={`/studio/issues/${issue.slug}`}

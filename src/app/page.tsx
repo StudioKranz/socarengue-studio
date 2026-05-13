@@ -15,7 +15,7 @@ export default function HomePage() {
         <SignalFrame className="min-h-[68vh] p-8 md:p-12">
           <div className="grid min-h-[58vh] items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-signal/75">Internal archive threshold</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-signal/75">Recovered archive threshold</p>
               <h1 className="mt-5 font-display text-6xl leading-[0.95] text-paper md:text-8xl">
                 {project.title}
               </h1>
@@ -31,7 +31,7 @@ export default function HomePage() {
                   href="/reader/rain-signal"
                   className="border border-paper/18 px-5 py-3 text-xs uppercase tracking-[0.24em] text-paper/76 transition hover:border-signal hover:text-signal"
                 >
-                  Open reader
+                  Begin scene signal
                 </Link>
               </div>
             </div>
