@@ -40,7 +40,7 @@ Planned stack:
 - GitHub based workflow
 - Vercel deployment later
 
-No application scaffold exists yet. This repository currently starts with planning and architecture documentation only.
+This repository currently contains the first seed-data prototype. Supabase is not connected yet.
 
 ## Documentation Map
 
@@ -53,14 +53,19 @@ No application scaffold exists yet. This repository currently starts with planni
 - [docs/roadmap.md](./docs/roadmap.md): modular feature roadmap
 - [docs/world/](./docs/world/): mythology, characters, resonance rules, visual symbolism, and soundtrack philosophy
 
-## Proposed Repo Structure
+## Repo Structure
 
-Initial planning structure:
+Current structure:
 
 ```txt
 socarengue-studio/
   README.md
   AGENTS.md
+  package.json
+  pnpm-lock.yaml
+  next.config.ts
+  tailwind.config.ts
+  tsconfig.json
   docs/
     platform-spec.md
     mvp.md
@@ -75,22 +80,35 @@ socarengue-studio/
       resonance-rules.md
       visual-symbolism.md
       soundtrack-philosophy.md
+  src/
+    app/
+      page.tsx
+      studio/
+      archive/
+      reader/
+    components/
+    lib/
+      content/
+      seed/
+    types/
 ```
 
-Future app structure should be added only after the documentation phase is accepted.
+Commit `pnpm-lock.yaml`. Do not commit `node_modules/`, `.next/`, `.vercel/`, `*.tsbuildinfo`, local `.env*` files, or OS files.
 
-Likely future structure:
+## Local Development
 
-```txt
-socarengue-studio/
-  app/
-  components/
-  content/
-  docs/
-  lib/
-  public/
-  styles/
-  types/
+Install and run:
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Validate before sharing:
+
+```bash
+pnpm typecheck
+pnpm build
 ```
 
 ## Clean Preview Routine
@@ -99,9 +117,9 @@ Use this routine before showing the prototype to collaborators:
 
 ```bash
 # Stop any running `pnpm dev` process first.
-PATH=/Users/apple/Library/pnpm:$PATH /Users/apple/Library/pnpm/pnpm typecheck
-PATH=/Users/apple/Library/pnpm:$PATH /Users/apple/Library/pnpm/pnpm build
-PATH=/Users/apple/Library/pnpm:$PATH /Users/apple/Library/pnpm/pnpm dev
+pnpm typecheck
+pnpm build
+pnpm dev
 ```
 
 Then open:
@@ -113,6 +131,55 @@ Then open:
 - `http://localhost:3000/reader/rain-signal`
 
 Do not run `next build` while the dev server is active; restart the dev server after a production build so the local preview uses a clean `.next` manifest.
+
+## Collaborator Preview
+
+Ask collaborators to review these routes in order:
+
+- `/`: the archive threshold and emotional first impression
+- `/studio`: the internal studio overview and signal index
+- `/studio/issues/the-street-remembers`: issue structure, scene sequence, and linked resonance
+- `/archive`: recovered artifact archive and scene-tracing affordances
+- `/reader/rain-signal`: cinematic scene reader and soundtrack cue presentation
+
+Preview questions:
+
+- Does it feel like a discovered archive of emotional transmissions?
+- Does the studio feel operational without becoming a generic dashboard?
+- Do artifacts, scenes, and soundtrack cues feel connected?
+- Does any visible copy feel too placeholder-like, corporate, or overexplained?
+
+## GitHub Setup
+
+From the project root:
+
+```bash
+git status
+git add .gitignore README.md AGENTS.md docs next-env.d.ts next.config.ts package.json pnpm-lock.yaml postcss.config.mjs src tailwind.config.ts tsconfig.json
+git commit -m "Scaffold Socarengue Studio prototype"
+git branch -M main
+git remote add origin git@github.com:<owner>/<repo>.git
+git push -u origin main
+```
+
+Before committing, confirm `git status --short --ignored` shows generated folders such as `node_modules/`, `.next/`, `.vercel/`, and `*.tsbuildinfo` as ignored rather than staged.
+
+## Vercel Preview Deployment
+
+Use Vercel Git integration for previews:
+
+1. Push the repository to GitHub.
+2. In Vercel, create a new project and import the GitHub repository.
+3. Keep the framework preset as `Next.js`.
+4. Use pnpm. Vercel should detect `pnpm-lock.yaml`; if fields are requested, use:
+   - Install Command: `pnpm install`
+   - Build Command: `pnpm build`
+   - Output Directory: leave default for Next.js
+5. Do not add environment variables for this prototype. There is no Supabase client, auth provider, upload service, payment provider, or external API.
+6. Deploy from the default branch to create the first preview.
+7. Use a non-production branch for follow-up collaborator previews; Vercel will create preview URLs for pull requests and branch pushes.
+
+Do not commit `.vercel/` if you run `vercel link` locally.
 
 ## Current Status
 
