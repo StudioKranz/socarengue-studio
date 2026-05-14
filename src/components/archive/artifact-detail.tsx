@@ -14,6 +14,13 @@ interface ArtifactDetailProps {
 
 export function ArtifactDetail({ artifact, media, scenes, loreEntries, tracks }: ArtifactDetailProps) {
   const hasLinkedContext = scenes.length > 0 || loreEntries.length > 0 || tracks.length > 0;
+  const isDevelopmentMaterial = [
+    "Early Concept",
+    "Visual Study",
+    "Alternate Page",
+    "Storyboard Sheet",
+    "Worldbuilding Study",
+  ].includes(artifact.classification);
 
   return (
     <div className="space-y-6">
@@ -21,9 +28,14 @@ export function ArtifactDetail({ artifact, media, scenes, loreEntries, tracks }:
         <div className="grid gap-8 lg:grid-cols-[0.92fr_1.08fr]">
           <ArtifactMedia media={media} priority="hero" />
           <div className="flex flex-col justify-center">
-            <MetadataLine label="Archive exhibit" value={artifact.classification} />
+            <MetadataLine label={isDevelopmentMaterial ? "Development material" : "Archive exhibit"} value={artifact.classification} />
             <h1 className="mt-4 font-display text-5xl leading-tight text-paper md:text-7xl">{artifact.title}</h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-paper/72">{artifact.publicDescription}</p>
+            {isDevelopmentMaterial ? (
+              <p className="mt-5 border-l border-ember/35 pl-4 text-sm uppercase tracking-[0.18em] text-ember/70">
+                Not a finished canon page
+              </p>
+            ) : null}
             {artifact.transcript ? (
               <blockquote className="mt-8 border-l border-ember/50 pl-5 font-display text-2xl leading-9 text-paper/88">
                 {artifact.transcript}
@@ -35,7 +47,7 @@ export function ArtifactDetail({ artifact, media, scenes, loreEntries, tracks }:
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <section className={`rounded-[6px] border border-paper/12 bg-ink/48 p-6 ${hasLinkedContext ? "" : "lg:col-span-2"}`}>
-          <MetadataLine label="Exhibit note" value="public reader archive" />
+          <MetadataLine label={isDevelopmentMaterial ? "Vault note" : "Exhibit note"} value="public reader archive" />
           <dl className="mt-6 grid gap-4 md:grid-cols-2">
             <div className="border-l border-signal/35 pl-4">
               <dt className="text-xs uppercase tracking-[0.22em] text-signal/75">Collection</dt>
@@ -51,7 +63,9 @@ export function ArtifactDetail({ artifact, media, scenes, loreEntries, tracks }:
             </div>
             <div className="border-l border-paper/20 pl-4">
               <dt className="text-xs uppercase tracking-[0.22em] text-paper/48">Reading mode</dt>
-              <dd className="mt-2 text-sm leading-6 text-paper/70">Public preview</dd>
+              <dd className="mt-2 text-sm leading-6 text-paper/70">
+                {isDevelopmentMaterial ? "Development vault" : "Public preview"}
+              </dd>
             </div>
           </dl>
         </section>

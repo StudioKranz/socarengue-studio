@@ -1,4 +1,4 @@
-import { issueOnePreviewPageSpecs, socarengueSeed } from "@/lib/seed/socarengue";
+import { developmentVaultSpecs, issueOnePreviewPageSpecs, socarengueSeed } from "@/lib/seed/socarengue";
 import type {
   Artifact,
   Character,
@@ -11,10 +11,12 @@ import type {
   Track,
 } from "@/types/content";
 
-const publicArtifactIds = [
+const openingExhibitArtifactIds = [
   "artifact_ovi_issue_artwork",
   ...issueOnePreviewPageSpecs.map((page) => page.artifactId),
 ];
+
+const developmentVaultArtifactIds = developmentVaultSpecs.map((item) => item.artifactId);
 
 export function getProject() {
   return socarengueSeed.project;
@@ -56,7 +58,19 @@ export function getSceneById(id: string): Scene | undefined {
 }
 
 export function getPublicArtifacts(): Artifact[] {
-  return publicArtifactIds
+  return [...openingExhibitArtifactIds, ...developmentVaultArtifactIds]
+    .map((id) => socarengueSeed.artifacts.find((artifact) => artifact.id === id))
+    .filter((artifact): artifact is Artifact => Boolean(artifact));
+}
+
+export function getOpeningExhibitArtifacts(): Artifact[] {
+  return openingExhibitArtifactIds
+    .map((id) => socarengueSeed.artifacts.find((artifact) => artifact.id === id))
+    .filter((artifact): artifact is Artifact => Boolean(artifact));
+}
+
+export function getDevelopmentVaultArtifacts(): Artifact[] {
+  return developmentVaultArtifactIds
     .map((id) => socarengueSeed.artifacts.find((artifact) => artifact.id === id))
     .filter((artifact): artifact is Artifact => Boolean(artifact));
 }

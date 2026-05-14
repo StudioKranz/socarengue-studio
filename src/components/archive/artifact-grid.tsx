@@ -8,9 +8,10 @@ interface ArtifactGridProps {
     media?: MediaAsset;
     linkedSceneSlug?: string;
   }>;
+  archiveMode?: "exhibit" | "vault";
 }
 
-export function ArtifactGrid({ records }: ArtifactGridProps) {
+export function ArtifactGrid({ records, archiveMode = "exhibit" }: ArtifactGridProps) {
   if (records.length === 0) {
     return (
       <EmptyState
@@ -23,7 +24,13 @@ export function ArtifactGrid({ records }: ArtifactGridProps) {
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {records.map(({ artifact, media, linkedSceneSlug }) => (
-        <ArtifactCard key={artifact.id} artifact={artifact} media={media} linkedSceneSlug={linkedSceneSlug} />
+        <ArtifactCard
+          key={artifact.id}
+          artifact={artifact}
+          media={media}
+          linkedSceneSlug={linkedSceneSlug}
+          archiveMode={archiveMode}
+        />
       ))}
     </div>
   );

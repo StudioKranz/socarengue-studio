@@ -2,11 +2,20 @@ import { ArchiveNav } from "@/components/navigation/archive-nav";
 import { ArtifactGrid } from "@/components/archive/artifact-grid";
 import { SignalFrame } from "@/components/ui/signal-frame";
 import { MetadataLine } from "@/components/ui/metadata-line";
-import { getMediaById, getPublicArtifacts, getSceneById } from "@/lib/content/queries";
+import {
+  getDevelopmentVaultArtifacts,
+  getMediaById,
+  getOpeningExhibitArtifacts,
+  getSceneById,
+} from "@/lib/content/queries";
 
 export default function ArchivePage() {
-  const artifacts = getPublicArtifacts();
-  const artifactRecords = artifacts.map((artifact) => ({
+  const openingExhibitRecords = getOpeningExhibitArtifacts().map((artifact) => ({
+    artifact,
+    media: getMediaById(artifact.primaryMediaId),
+    linkedSceneSlug: getSceneById(artifact.linkedSceneIds[0] ?? "")?.slug,
+  }));
+  const developmentVaultRecords = getDevelopmentVaultArtifacts().map((artifact) => ({
     artifact,
     media: getMediaById(artifact.primaryMediaId),
     linkedSceneSlug: getSceneById(artifact.linkedSceneIds[0] ?? "")?.slug,
@@ -23,7 +32,18 @@ export default function ArchivePage() {
             A focused set of images from The Sticks Return, arranged as the first public window into Socarengue.
           </p>
         </SignalFrame>
-        <ArtifactGrid records={artifactRecords} />
+        <ArtifactGrid records={openingExhibitRecords} />
+
+        <section className="space-y-5 pt-8">
+          <div className="border-t border-paper/12 pt-8">
+            <MetadataLine label="Development Vault" value="early concepts and visual studies" />
+            <h2 className="mt-3 font-display text-4xl leading-tight text-paper md:text-5xl">Development Vault</h2>
+            <p className="mt-4 max-w-3xl text-base leading-7 text-paper/62">
+              Early concepts, alternate pages, layout studies, and visual experiments from the making of the opening movement.
+            </p>
+          </div>
+          <ArtifactGrid records={developmentVaultRecords} archiveMode="vault" />
+        </section>
       </section>
     </main>
   );
