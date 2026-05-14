@@ -3,6 +3,7 @@ import Link from "next/link";
 const navItems = [
   { href: "/", label: "Threshold" },
   { href: "/studio", label: "Studio" },
+  { href: "/studio/intake", label: "Intake" },
   { href: "/studio/issues/the-street-remembers", label: "Issue" },
   { href: "/archive", label: "Archive" },
   { href: "/reader/rain-signal", label: "Reader" },

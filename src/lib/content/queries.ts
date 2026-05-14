@@ -30,6 +30,15 @@ export function getPrimaryRelease(): Release {
   return socarengueSeed.releases[0];
 }
 
+export function getIntakeReferenceData() {
+  return {
+    issues: socarengueSeed.issues,
+    scenes: socarengueSeed.scenes,
+    loreEntries: socarengueSeed.loreEntries,
+    tracks: socarengueSeed.tracks,
+  };
+}
+
 export function getScenesForIssue(issueId: string): Scene[] {
   return socarengueSeed.scenes
     .filter((scene) => scene.issueId === issueId)
