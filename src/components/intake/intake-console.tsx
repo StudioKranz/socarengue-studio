@@ -12,6 +12,7 @@ import type {
 import { IntakeEmptyState } from "@/components/intake/intake-empty-state";
 import { IntakeDossierPreview } from "@/components/intake/intake-dossier-preview";
 import { IntakeField } from "@/components/intake/intake-field";
+import { IntakePublicationReadiness } from "@/components/intake/intake-publication-readiness";
 import { IntakeReviewLanes } from "@/components/intake/intake-review-lanes";
 import { IntakeTransmissionPreview } from "@/components/intake/intake-transmission-preview";
 import { MetadataLine } from "@/components/ui/metadata-line";
@@ -415,6 +416,7 @@ export function IntakeConsole({ issues, scenes, loreEntries, tracks }: IntakeCon
         <>
           <IntakeDossierPreview draft={stagedDraft} scene={stagedScene} track={stagedTrack} loreEntries={stagedLore} />
           <IntakeTransmissionPreview draft={stagedDraft} scene={stagedScene} track={stagedTrack} loreEntries={stagedLore} />
+          <IntakePublicationReadiness draft={stagedDraft} scene={stagedScene} track={stagedTrack} loreEntries={stagedLore} />
           <IntakeReviewLanes draft={stagedDraft} scene={stagedScene} track={stagedTrack} loreEntries={stagedLore} />
         </>
       ) : null}
