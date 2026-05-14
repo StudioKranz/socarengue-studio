@@ -11,6 +11,7 @@ import type {
 } from "@/types/intake";
 import { IntakeEmptyState } from "@/components/intake/intake-empty-state";
 import { IntakeField } from "@/components/intake/intake-field";
+import { IntakeReviewLanes } from "@/components/intake/intake-review-lanes";
 import { MetadataLine } from "@/components/ui/metadata-line";
 import { SignalFrame } from "@/components/ui/signal-frame";
 
@@ -118,6 +119,18 @@ export function IntakeConsole({ issues, scenes, loreEntries, tracks }: IntakeCon
   const selectedLore = useMemo(
     () => loreEntries.filter((entry) => draft.linkedLoreIds.includes(entry.id)),
     [draft.linkedLoreIds, loreEntries],
+  );
+  const stagedScene = useMemo(
+    () => scenes.find((scene) => scene.id === stagedDraft?.sceneId),
+    [stagedDraft?.sceneId, scenes],
+  );
+  const stagedTrack = useMemo(
+    () => tracks.find((track) => track.id === stagedDraft?.soundtrackTrackId),
+    [stagedDraft?.soundtrackTrackId, tracks],
+  );
+  const stagedLore = useMemo(
+    () => loreEntries.filter((entry) => stagedDraft?.linkedLoreIds.includes(entry.id)),
+    [stagedDraft?.linkedLoreIds, loreEntries],
   );
 
   function updateDraft<K extends keyof ArtifactIntakeDraft>(key: K, value: ArtifactIntakeDraft[K]) {
@@ -395,6 +408,10 @@ export function IntakeConsole({ issues, scenes, loreEntries, tracks }: IntakeCon
           </section>
         </aside>
       </div>
+
+      {stagedDraft ? (
+        <IntakeReviewLanes draft={stagedDraft} scene={stagedScene} track={stagedTrack} loreEntries={stagedLore} />
+      ) : null}
     </div>
   );
 }
