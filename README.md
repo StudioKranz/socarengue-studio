@@ -153,7 +153,7 @@ Do not run `next build` while the dev server is active; restart the dev server a
 Ask public readers to review these routes in order:
 
 - `/`: Reader Mode landing and emotional first impression
-- `/preview/issue-one`: The Sticks Return: Opening Signal
+- `/preview/issue-one`: The Sticks Return
 - `/archive`: recovered files and artifact atmosphere
 
 Ask collaborators reviewing Studio Mode to open internal routes directly:

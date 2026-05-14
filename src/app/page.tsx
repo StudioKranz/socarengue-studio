@@ -13,9 +13,9 @@ export default function HomePage() {
         <SignalFrame className="min-h-[68vh] p-8 md:p-12">
           <div className="grid min-h-[58vh] items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-signal/75">Reader Mode / Opening Transmission</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-signal/75">Preview / Issue One</p>
               <h1 className="mt-5 font-display text-6xl leading-[0.95] text-paper md:text-8xl">
-                The Sticks Return: Opening Signal
+                The Sticks Return
               </h1>
               <p className="mt-6 max-w-2xl text-xl leading-9 text-paper/72">
                 A first glimpse from the opening movement of Socarengue Issue One.
@@ -26,13 +26,13 @@ export default function HomePage() {
                   href="/preview/issue-one"
                   className="border border-ember/50 bg-ember/12 px-5 py-3 text-xs uppercase tracking-[0.24em] text-ember transition hover:border-signal hover:text-signal"
                 >
-                  Read opening signal
+                  Read Preview
                 </Link>
                 <Link
                   href="/archive"
                   className="border border-paper/18 px-5 py-3 text-xs uppercase tracking-[0.24em] text-paper/76 transition hover:border-signal hover:text-signal"
                 >
-                  Browse recovered files
+                  Browse Archive
                 </Link>
               </div>
             </div>
@@ -40,7 +40,7 @@ export default function HomePage() {
               <div className="overflow-hidden rounded-[6px] border border-paper/14 bg-ink/80 shadow-signal">
                 <img
                   src="/artifacts/issue-01/publish/01-cover-final.png"
-                  alt="The Sticks Return: Opening Signal cover."
+                  alt="The Sticks Return cover."
                   className="h-auto w-full"
                 />
               </div>

@@ -4,7 +4,7 @@ import { getIssueOnePreviewPages } from "@/lib/content/queries";
 import { MetadataLine } from "@/components/ui/metadata-line";
 
 export const metadata: Metadata = {
-  title: "The Sticks Return: Opening Signal | Socarengue Studio",
+  title: "The Sticks Return | Socarengue Studio",
   description: "A first glimpse from the opening movement of Socarengue Issue One.",
 };
 
@@ -16,9 +16,9 @@ export default function IssueOnePreviewPage() {
       <section className="archive-shell pt-8">
         <div className="mb-8 flex flex-col gap-5 border-b border-paper/12 pb-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <MetadataLine label="Public preview" value="Opening Signal" />
+            <MetadataLine label="Public preview" value="Issue One" />
             <h1 className="mt-3 font-display text-5xl leading-tight text-paper md:text-7xl">
-              The Sticks Return: Opening Signal
+              The Sticks Return
             </h1>
             <p className="mt-4 max-w-2xl text-lg leading-8 text-paper/68">
               A first glimpse from the opening movement of Socarengue Issue One.
