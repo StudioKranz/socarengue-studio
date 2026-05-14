@@ -48,6 +48,10 @@ export function getPublicArtifacts(): Artifact[] {
   return socarengueSeed.artifacts.filter((artifact) => publicVisibility.includes(artifact.visibility));
 }
 
+export function getArtifactBySlug(slug: string): Artifact | undefined {
+  return socarengueSeed.artifacts.find((artifact) => artifact.slug === slug);
+}
+
 export function getArtifactsByIds(ids: string[]): Artifact[] {
   return ids
     .map((id) => socarengueSeed.artifacts.find((artifact) => artifact.id === id))
@@ -70,6 +74,27 @@ export function getMediaByIds(ids: string[]): MediaAsset[] {
   return ids
     .map((id) => socarengueSeed.mediaAssets.find((asset) => asset.id === id))
     .filter((asset): asset is MediaAsset => Boolean(asset));
+}
+
+export function getMediaById(id?: string): MediaAsset | undefined {
+  if (!id) {
+    return undefined;
+  }
+
+  return socarengueSeed.mediaAssets.find((asset) => asset.id === id);
+}
+
+export function getScenesByIds(ids: string[]): Scene[] {
+  return ids
+    .map((id) => socarengueSeed.scenes.find((scene) => scene.id === id))
+    .filter((scene): scene is Scene => Boolean(scene))
+    .sort((a, b) => a.sequenceIndex - b.sequenceIndex);
+}
+
+export function getTracksByIds(ids: string[]): Track[] {
+  return ids
+    .map((id) => socarengueSeed.tracks.find((track) => track.id === id))
+    .filter((track): track is Track => Boolean(track));
 }
 
 export function getSoundtrackCuesByIds(ids: string[]): Array<SoundtrackCue & { track: Track }> {

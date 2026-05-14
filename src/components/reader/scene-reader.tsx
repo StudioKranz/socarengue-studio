@@ -58,7 +58,7 @@ export function SceneReader({ scene, characters, artifacts, mediaAssets, cues }:
           <div className="mt-4 space-y-4">
             {artifacts.length > 0 ? (
               artifacts.map((artifact) => (
-                <Link key={artifact.id} href={`/archive#${artifact.slug}`} className="block transition hover:text-signal">
+                <Link key={artifact.id} href={`/archive/${artifact.slug}`} className="block transition hover:text-signal">
                   <p className="font-display text-xl text-paper">{artifact.title}</p>
                   <p className="mt-1 text-sm leading-6 text-paper/58">{artifact.publicDescription}</p>
                   <span className="mt-2 inline-block text-xs uppercase tracking-[0.2em] text-signal/70">

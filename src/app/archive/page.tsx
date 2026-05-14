@@ -2,12 +2,13 @@ import { ArchiveNav } from "@/components/navigation/archive-nav";
 import { ArtifactGrid } from "@/components/archive/artifact-grid";
 import { SignalFrame } from "@/components/ui/signal-frame";
 import { MetadataLine } from "@/components/ui/metadata-line";
-import { getPublicArtifacts, getSceneById } from "@/lib/content/queries";
+import { getMediaById, getPublicArtifacts, getSceneById } from "@/lib/content/queries";
 
 export default function ArchivePage() {
   const artifacts = getPublicArtifacts();
   const artifactRecords = artifacts.map((artifact) => ({
     artifact,
+    media: getMediaById(artifact.primaryMediaId),
     linkedSceneSlug: getSceneById(artifact.linkedSceneIds[0] ?? "")?.slug,
   }));
 
