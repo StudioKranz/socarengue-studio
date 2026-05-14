@@ -1,4 +1,4 @@
-import { socarengueSeed } from "@/lib/seed/socarengue";
+import { issueOnePreviewPageSpecs, socarengueSeed } from "@/lib/seed/socarengue";
 import type {
   Artifact,
   Character,
@@ -91,6 +91,25 @@ export function getMediaById(id?: string): MediaAsset | undefined {
   }
 
   return socarengueSeed.mediaAssets.find((asset) => asset.id === id);
+}
+
+export function getIssueOnePreviewPages(): Array<{ artifact: Artifact; media: MediaAsset; label: string }> {
+  const pages: Array<{ artifact: Artifact; media: MediaAsset; label: string }> = [];
+
+  for (const page of issueOnePreviewPageSpecs) {
+    const artifact = socarengueSeed.artifacts.find((item) => item.id === page.artifactId);
+    const media = socarengueSeed.mediaAssets.find((item) => item.id === page.mediaId);
+
+    if (artifact && media) {
+      pages.push({
+        artifact,
+        media,
+        label: page.label,
+      });
+    }
+  }
+
+  return pages;
 }
 
 export function getScenesByIds(ids: string[]): Scene[] {

@@ -2,6 +2,87 @@ import type { SocarengueSeedData } from "@/types/content";
 
 const stamp = "2026-05-13T09:00:00.000Z";
 
+export const issueOnePreviewPageSpecs = [
+  {
+    artifactId: "artifact_issue_01_page_01",
+    mediaId: "media_issue_01_page_01",
+    label: "Page 1",
+    source: "/artifacts/issue-01/pages/glowing-sticks-awakening-panel-v1.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_02",
+    mediaId: "media_issue_01_page_02",
+    label: "Page 2",
+    source: "/artifacts/issue-01/pages/socarengue-issue-01-page-002-drumoff-opening.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_03",
+    mediaId: "media_issue_01_page_03",
+    label: "Page 3",
+    source: "/artifacts/issue-01/pages/issue-01-page-002-drum-battle-opening-v1.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_04",
+    mediaId: "media_issue_01_page_04",
+    label: "Page 4",
+    source: "/artifacts/issue-01/pages/issue-01-page-002-drum-battle-cinematic-v2.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_05",
+    mediaId: "media_issue_01_page_05",
+    label: "Page 5",
+    source: "/artifacts/issue-01/pages/socarengue-issue-01-page-002-opening-spread.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_06",
+    mediaId: "media_issue_01_page_06",
+    label: "Page 6",
+    source: "/artifacts/issue-01/pages/issue-01-page-002-drum-battle-spread-v3.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_07",
+    mediaId: "media_issue_01_page_07",
+    label: "Page 7",
+    source: "/artifacts/issue-01/pages/issue-01-page-003-004-vs-spread-v1.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_08",
+    mediaId: "media_issue_01_page_08",
+    label: "Page 8",
+    source: "/artifacts/issue-01/pages/issue-01-page-003-004-blackout-clean-spread-v2.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_09",
+    mediaId: "media_issue_01_page_09",
+    label: "Page 9",
+    source: "/artifacts/issue-01/pages/issue-01-page-003-004-blackout-spread-photo-v1.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_10",
+    mediaId: "media_issue_01_page_10",
+    label: "Page 10",
+    source: "/artifacts/issue-01/pages/issue-01-page-003-004-blackout-reveal-v3.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_11",
+    mediaId: "media_issue_01_page_11",
+    label: "Page 11",
+    source: "/artifacts/issue-01/pages/socarengue-issue-01-page-004-sticks-awaken.png",
+  },
+  {
+    artifactId: "artifact_issue_01_page_12",
+    mediaId: "media_issue_01_page_12",
+    label: "Page 12",
+    source: "/artifacts/issue-01/pages/ovi-son-of-rhythm-visual-guide-v1.png",
+  },
+  {
+    artifactId: "artifact_issue_01_final_signal",
+    mediaId: "media_issue_01_final_signal",
+    label: "Final Signal",
+    source: "/artifacts/issue-01/pages/ovi-final-tease.PNG",
+  },
+] as const;
+
 export const socarengueSeed: SocarengueSeedData = {
   project: {
     id: "project_socarengue",
@@ -301,6 +382,23 @@ export const socarengueSeed: SocarengueSeedData = {
       createdAt: stamp,
       updatedAt: stamp,
     },
+    ...issueOnePreviewPageSpecs.map((page) => ({
+      id: page.artifactId,
+      projectId: "project_socarengue",
+      title: `Issue One ${page.label}`,
+      slug: `issue-one-${page.label.toLowerCase().replaceAll(" ", "-")}`,
+      classification: "Issue One public preview page",
+      publicDescription: "Public preview comic page from Issue One.",
+      privateNotes: "Local Issue One page asset staged for public preview.",
+      primaryMediaId: page.mediaId,
+      linkedSceneIds: [],
+      linkedLoreIds: [],
+      linkedTrackIds: [],
+      status: "draft" as const,
+      visibility: "public" as const,
+      createdAt: stamp,
+      updatedAt: stamp,
+    })),
   ],
   mediaAssets: [
     {
@@ -318,6 +416,20 @@ export const socarengueSeed: SocarengueSeedData = {
       createdAt: stamp,
       updatedAt: stamp,
     },
+    ...issueOnePreviewPageSpecs.map((page) => ({
+      id: page.mediaId,
+      projectId: "project_socarengue",
+      title: `Issue One ${page.label}`,
+      type: "panel" as const,
+      source: page.source,
+      credit: "Socarengue Studio",
+      rightsStatus: "local Issue One public preview artwork",
+      altText: `Issue One public preview comic ${page.label.toLowerCase()}.`,
+      status: "draft" as const,
+      visibility: "public" as const,
+      createdAt: stamp,
+      updatedAt: stamp,
+    })),
     {
       id: "media_cover_001",
       projectId: "project_socarengue",
