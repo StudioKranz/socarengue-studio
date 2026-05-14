@@ -111,6 +111,12 @@ pnpm typecheck
 pnpm build
 ```
 
+## Reader Mode vs Studio Mode
+
+The public surface is **Reader Mode**. It is designed to be shareable now: cinematic, comic first, and focused on the curated opening preview at `/preview/issue-one`, with the public archive available at `/archive`.
+
+The internal tools are **Studio Mode**. Routes such as `/studio`, `/studio/intake`, and `/studio/issues/the-street-remembers` still work when visited directly, but they are operator-facing and should not be promoted as the primary public experience.
+
 ## Clean Preview Routine
 
 Use this routine before showing the prototype to collaborators:
@@ -125,26 +131,35 @@ pnpm dev
 Then open:
 
 - `http://localhost:3000/`
-- `http://localhost:3000/studio`
-- `http://localhost:3000/studio/issues/the-street-remembers`
+- `http://localhost:3000/preview/issue-one`
 - `http://localhost:3000/archive`
-- `http://localhost:3000/reader/rain-signal`
+
+For Studio Mode review, open the internal routes directly:
+
+- `http://localhost:3000/studio`
+- `http://localhost:3000/studio/intake`
+- `http://localhost:3000/studio/issues/the-street-remembers`
 
 Do not run `next build` while the dev server is active; restart the dev server after a production build so the local preview uses a clean `.next` manifest.
 
 ## Collaborator Preview
 
-Ask collaborators to review these routes in order:
+Ask public readers to review these routes in order:
 
-- `/`: the archive threshold and emotional first impression
-- `/studio`: the internal studio overview and signal index
+- `/`: Reader Mode landing and emotional first impression
+- `/preview/issue-one`: The Sticks Return: Opening Signal
+- `/archive`: recovered files and artifact atmosphere
+
+Ask collaborators reviewing Studio Mode to open internal routes directly:
+
+- `/studio`: internal studio overview and signal index
+- `/studio/intake`: artifact intake prototype
 - `/studio/issues/the-street-remembers`: issue structure, scene sequence, and linked resonance
-- `/archive`: recovered artifact archive and scene-tracing affordances
-- `/reader/rain-signal`: cinematic scene reader and soundtrack cue presentation
 
 Preview questions:
 
 - Does it feel like a discovered archive of emotional transmissions?
+- Does Reader Mode feel public, cinematic, and comic first?
 - Does the studio feel operational without becoming a generic dashboard?
 - Do artifacts, scenes, and soundtrack cues feel connected?
 - Does any visible copy feel too placeholder-like, corporate, or overexplained?
