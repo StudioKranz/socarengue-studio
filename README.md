@@ -113,7 +113,13 @@ pnpm build
 
 ## Reader Mode vs Studio Mode
 
-The public surface is **Reader Mode**. It is designed to be shareable now: cinematic, comic first, and focused on the curated opening preview at `/preview/issue-one`, with the public archive available at `/archive`.
+The public surface is **Reader Mode**. It is designed to be shareable now: cinematic, comic first, and focused on the curated preview at `/preview/issue-one`, with the public archive available at `/archive`.
+
+Primary public navigation should stay simple:
+
+- `Preview` -> `/preview/issue-one`
+- `Archive` -> `/archive`
+- `Studio` -> `/studio` as a subtle, de-emphasized link
 
 The internal tools are **Studio Mode**. Routes such as `/studio`, `/studio/intake`, and `/studio/issues/the-street-remembers` still work when visited directly, but they are operator-facing and should not be promoted as the primary public experience.
 
