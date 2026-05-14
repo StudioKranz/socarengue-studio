@@ -9,10 +9,12 @@ import type {
   Scene,
   SoundtrackCue,
   Track,
-  Visibility,
 } from "@/types/content";
 
-const publicVisibility: Visibility[] = ["public", "review"];
+const publicArtifactIds = [
+  "artifact_ovi_issue_artwork",
+  ...issueOnePreviewPageSpecs.map((page) => page.artifactId),
+];
 
 export function getProject() {
   return socarengueSeed.project;
@@ -54,7 +56,9 @@ export function getSceneById(id: string): Scene | undefined {
 }
 
 export function getPublicArtifacts(): Artifact[] {
-  return socarengueSeed.artifacts.filter((artifact) => publicVisibility.includes(artifact.visibility));
+  return publicArtifactIds
+    .map((id) => socarengueSeed.artifacts.find((artifact) => artifact.id === id))
+    .filter((artifact): artifact is Artifact => Boolean(artifact));
 }
 
 export function getArtifactBySlug(slug: string): Artifact | undefined {

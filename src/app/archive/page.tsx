@@ -17,10 +17,10 @@ export default function ArchivePage() {
       <ArchiveNav />
       <section className="archive-shell space-y-6 pt-8">
         <SignalFrame className="p-8">
-          <MetadataLine label="Artifact archive" value="released fragments and recovered traces" />
-          <h1 className="mt-4 font-display text-5xl leading-tight text-paper md:text-7xl">Recovered Signals</h1>
+          <MetadataLine label="Reader archive" value="curated mythology exhibit" />
+          <h1 className="mt-4 font-display text-5xl leading-tight text-paper md:text-7xl">The Opening Exhibit</h1>
           <p className="mt-5 max-w-3xl text-lg leading-8 text-paper/70">
-            Objects, documents, and sonic fragments that carry the first visible edges of Socarengue mythology.
+            A focused set of images from The Sticks Return, arranged as the first public window into Socarengue.
           </p>
         </SignalFrame>
         <ArtifactGrid records={artifactRecords} />

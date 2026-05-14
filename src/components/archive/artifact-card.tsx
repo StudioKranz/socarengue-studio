@@ -18,19 +18,17 @@ export function ArtifactCard({ artifact, media, linkedSceneSlug }: ArtifactCardP
       <Link href={`/archive/${artifact.slug}`} aria-label={`Open artifact: ${artifact.title}`}>
         <ArtifactMedia media={media} />
       </Link>
-      <MetadataLine label="Class" value={artifact.classification} />
+      <MetadataLine label="Exhibit" value={artifact.classification} />
       <h2 className="mt-3 font-display text-2xl text-paper">{artifact.title}</h2>
       <p className="mt-3 text-sm leading-6 text-paper/68">{artifact.publicDescription}</p>
       <div className="mt-5 flex flex-wrap gap-4 text-xs uppercase tracking-[0.22em]">
         {linkedSceneSlug ? (
           <Link href={`/reader/${linkedSceneSlug}`} className="text-signal transition group-hover:text-ember">
-            Trace scene signal
+            Read linked scene
           </Link>
-        ) : (
-          <span className="text-paper/38">Scene signal pending</span>
-        )}
+        ) : null}
         <Link href={`/archive/${artifact.slug}`} className="text-paper/48 transition hover:text-signal">
-          Open recovered file
+          View exhibit
         </Link>
       </div>
     </article>
