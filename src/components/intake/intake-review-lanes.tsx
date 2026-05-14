@@ -15,7 +15,7 @@ interface Lane {
   reading: string;
 }
 
-interface RoutingSignal {
+export interface RoutingSignal {
   role: string;
   intensity: "high" | "medium";
   reason: string;
@@ -69,7 +69,7 @@ function hasLore(loreEntries: LoreEntry[], pattern: RegExp) {
   return loreEntries.some((entry) => pattern.test(`${entry.title} ${entry.category} ${entry.publicText}`));
 }
 
-function buildRoutingSignals(draft: ArtifactIntakeDraft, scene?: Scene, track?: Track, loreEntries: LoreEntry[] = []): RoutingSignal[] {
+export function buildRoutingSignals(draft: ArtifactIntakeDraft, scene?: Scene, track?: Track, loreEntries: LoreEntry[] = []): RoutingSignal[] {
   const active = new Map<string, RoutingSignal>();
   const artifactType = draft.artifactType;
   const visibility = draft.collaboratorVisibility;
