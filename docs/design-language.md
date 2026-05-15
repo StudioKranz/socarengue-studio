@@ -181,7 +181,13 @@ Public pages should feel like entering the work, not being sold the work.
 
 The public site may use a compact upper-left comic corner box as recurring trade dress and navigation back to the main archive.
 
-The v1 mark uses an inline fleur-de-lis SVG and a matching placeholder file at `/public/brand/fleur-de-lis-placeholder.svg`. Replace that placeholder with final Socarengue brand artwork when the official mark is available; labels should remain live HTML text, not image-based text.
+The finalized Socarengue fleur-de-lis assets live in `/public/brand/`:
+
+- `socarengue-fleur-de-lis.svg`
+- `socarengue-fleur-de-lis-gold.svg`
+- `socarengue-fleur-de-lis-cream.svg`
+
+The live CornerBox uses the finalized fleur-de-lis geometry as an inline `currentColor` SVG so variants can tint the mark through CSS. `docs/design/assets/socarengue-corner-box-preview.png` is a visual reference only; the live CornerBox remains SVG mark, CSS border/background, and HTML text labels.
 
 ## Accessibility
 
