@@ -81,3 +81,16 @@ button:focus-visible {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(66, 213, 217, 0.46), rgba(214, 163, 74, 0.28), transparent);
 }
+
+.corner-box-fixed {
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top));
+  left: max(1rem, env(safe-area-inset-left));
+  z-index: 20;
+}
+
+.corner-box-sticky {
+  position: sticky;
+  top: max(1rem, env(safe-area-inset-top));
+  z-index: 10;
+}

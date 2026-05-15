@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { ArchiveNav } from "@/components/navigation/archive-nav";
+import { PublicSiteShell } from "@/components/navigation/public-site-shell";
 import { ArtifactDetail } from "@/components/archive/artifact-detail";
 import {
   getArtifactBySlug,
@@ -29,17 +30,19 @@ export default async function ArtifactDetailPage({ params }: ArtifactDetailPageP
   }
 
   return (
-    <main className="min-h-screen pb-16">
-      <ArchiveNav />
-      <section className="archive-shell pt-8">
-        <ArtifactDetail
-          artifact={artifact}
-          media={getMediaById(artifact.primaryMediaId)}
-          scenes={getScenesByIds(artifact.linkedSceneIds)}
-          loreEntries={getLoreByIds(artifact.linkedLoreIds)}
-          tracks={getTracksByIds(artifact.linkedTrackIds)}
-        />
-      </section>
-    </main>
+    <PublicSiteShell>
+      <main className="min-h-screen pb-16">
+        <ArchiveNav />
+        <section className="archive-shell pt-8">
+          <ArtifactDetail
+            artifact={artifact}
+            media={getMediaById(artifact.primaryMediaId)}
+            scenes={getScenesByIds(artifact.linkedSceneIds)}
+            loreEntries={getLoreByIds(artifact.linkedLoreIds)}
+            tracks={getTracksByIds(artifact.linkedTrackIds)}
+          />
+        </section>
+      </main>
+    </PublicSiteShell>
   );
 }

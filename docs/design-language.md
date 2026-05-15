@@ -177,6 +177,12 @@ The first impression should reveal:
 
 Public pages should feel like entering the work, not being sold the work.
 
+### Corner Box
+
+The public site may use a compact upper-left comic corner box as recurring trade dress and navigation back to the main archive.
+
+The v1 mark uses an inline fleur-de-lis SVG and a matching placeholder file at `/public/brand/fleur-de-lis-placeholder.svg`. Replace that placeholder with final Socarengue brand artwork when the official mark is available; labels should remain live HTML text, not image-based text.
+
 ## Accessibility
 
 Atmosphere must not compromise access.

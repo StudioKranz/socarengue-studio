@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 58" role="img" aria-labelledby="title desc">
+  <title id="title">Placeholder fleur-de-lis mark</title>
+  <desc id="desc">Temporary Socarengue corner box mark pending final brand artwork.</desc>
+  <rect width="48" height="58" fill="#05070b"/>
+  <path fill="#d6a34a" d="M24 3c6 7 9 13 9 18 0 4-2 7-5 9 4-1 8-4 12-8 2 8-1 15-9 19l8 3v6H27v5h-6v-5H9v-6l8-3C9 37 6 30 8 22c4 4 8 7 12 8-3-2-5-5-5-9 0-5 3-11 9-18Z"/>
+  <path d="M24 15v35" stroke="#05070b" stroke-linecap="round" stroke-width="3"/>
+</svg>
