@@ -1,0 +1,197 @@
+# Studio Copilot
+
+The Studio Copilot is a next-action suggestion surface inside the Socarengue Studio workflow dashboard. It is designed to surface what the story needs next without replacing human creative judgment.
+
+The Copilot is not an autonomous agent. It does not act on the archive without approval. It does not call external services. In its current form, it is a deterministic local shell. In future phases, it may be connected to a real AI model operating within a carefully scoped tool boundary.
+
+---
+
+## Current Implementation
+
+### What It Is
+
+The Copilot panel renders in the Studio dashboard alongside the workflow board. It reads the current state of the local placeholder workflow data and surfaces a list of suggested next actions.
+
+All suggestions are pre-written, deterministic, and local. They are stored in `src/lib/studio/demo-workflow.ts` as part of the placeholder workflow data. No AI model is called. No external service is contacted.
+
+### What It Does
+
+In the current implementation, the Copilot:
+
+- Displays a list of suggested next actions relevant to the current workflow state
+- Formats suggestions as short, clear action prompts in the Socarengue editorial voice
+- Presents suggestions as options the collaborator may act on, not as automatic decisions
+- Links suggestions to specific cards, scenes, artifacts, or lore entries where relevant
+
+Example suggestion text from the current placeholder data:
+
+- *Scene 04 is missing a dialogue pass. Request draft from story collaborator.*
+- *Storyboard frame: object placement unresolved. Confirm lore entry before art proceeds.*
+- *Lyric fragment in review. Assign music review to Ovi.*
+- *Three items in Needs Input. Review blockers before moving new work into Drafting.*
+
+### What It Does Not Do
+
+- It does not call OpenAI, Anthropic, Vercel AI SDK, or any other external AI API
+- It does not read or write real story canon or archive records
+- It does not send data outside the local application
+- It does not take autonomous action on workflow state
+- It does not generate new copy, suggest story beats, or propose lore changes
+
+The Copilot panel is a UI shell that demonstrates the intended behavior. The intelligence behind the suggestions in the proof-of-concept is human-authored placeholder text, not AI output.
+
+---
+
+## Future AI Assistant Philosophy
+
+When the Copilot is connected to a real AI model in Phase 6, the philosophy governing its behavior must be explicitly designed and approved before implementation.
+
+The core rule is simple: **the Copilot suggests, humans decide.**
+
+No action that changes story records, modifies canon state, creates review requests, or promotes artifacts should happen without explicit human approval. The AI is a collaborator assistant, not an autonomous editor.
+
+### What the AI Copilot Should Know
+
+In future phases, the Copilot will have access to:
+
+- current workflow board state
+- artifact review states and assigned review lanes
+- scene summaries and emotional beat descriptions (within privacy scope)
+- lore entry canon states and gap areas
+- character and issue linkage structures
+- Copilot-approved tool function list
+
+The Copilot must not have access to:
+
+- private operator notes unless explicitly granted
+- unreleased story canon that is not yet cleared for AI processing
+- rights-sensitive materials, performer likenesses, or licensed content
+- any material the project owner has not explicitly approved for AI context
+
+### Approved Tool Actions
+
+When the AI Copilot is connected, it should be restricted to a defined, approved set of tool actions. These actions are the boundary of what the AI can propose or initiate.
+
+Approved tool action candidates:
+
+- `summarize_blockers`: produce a readable summary of current workflow blockers
+- `draft_collaborator_request`: draft a message to a specific collaborator requesting a missing asset or decision
+- `suggest_labels`: propose artifact labels based on content description and linked story objects
+- `create_task`: draft a new workflow task record for operator review before it appears on the board
+- `link_artifact`: propose a link between an artifact and a scene, issue, character, or lore entry
+- `prepare_review_note`: draft a review note for a collaborator assignment
+- `identify_gaps`: scan the workflow state and surface scenes, lore entries, or characters with incomplete records
+
+Rejected tool actions (must not be implemented):
+
+- `update_canon_state`: no AI action should change whether something is canon
+- `promote_to_archive`: no AI action should move an artifact to public archive
+- `delete_record`: no AI action should delete any story object
+- `publish_artifact`: no AI action should trigger public publication
+- `send_message`: no AI action should send external communications without explicit user initiation
+- `generate_story_content_as_canon`: AI-generated story text must be marked draft and reviewed before any canon consideration
+
+### Generated Copy Rules
+
+Any text generated by the AI Copilot must:
+
+- be marked clearly as `generatedBy: 'ai'` in the record
+- appear in a review state, not as final content
+- require operator or collaborator review and explicit approval before any use
+- never be committed to the archive or canon records without human review
+
+Generated text includes: task descriptions, collaborator request drafts, review summaries, label suggestions, and proposed lore gap summaries.
+
+Generated text does not include: canonical lore, finalized dialogue, approved artifact descriptions, or official story records of any kind.
+
+### Privacy and Canon Protection
+
+The AI Copilot must never be connected to:
+
+- external APIs without an approved data privacy review
+- a context window that includes unreleased story spoilers or private lore unless deliberately authorized
+- a model that stores or retrains on project data without explicit written consent from the project owner
+- any surface that would allow AI-generated content to be confused with official Socarengue canon
+
+Before connecting the Copilot to any external AI model, the following must be decided and documented:
+
+- Which story records may enter the AI context window
+- Which records are always excluded (private notes, unreleased canon, rights-sensitive materials)
+- Which AI model is approved and what its data retention policy is
+- How generated content is marked, stored, and reviewed before use
+- What happens to generated content that is not approved: is it discarded, archived privately, or retained as rejected draft
+
+These decisions must be made by the project owner before Phase 6 implementation begins.
+
+### Human Approval Requirements
+
+Every AI Copilot action that proposes a change must present the proposed change as a review item, not as a committed action.
+
+The collaborator or operator should see:
+
+- what the AI proposed
+- why it was proposed (the reasoning or context)
+- what approving the action will do
+- what rejecting or editing the action will do
+
+The system should make it easy to dismiss, edit, or approve Copilot proposals without those actions feeling high-stakes.
+
+The Copilot should never surface proposals that feel like obligations. It should feel like a thoughtful collaborator making a suggestion, not a system demanding a decision.
+
+---
+
+## Safe Action Patterns
+
+These patterns describe how a well-implemented AI Copilot should behave across common workflow scenarios.
+
+### Gap Identification
+
+Copilot sees a lore entry with `canonicalStatus: candidate_canon` that is linked to a storyboard in production. Copilot proposes: *This lore entry is still candidate canon, but the storyboard depends on its confirmed object placement. Suggest requesting canon confirmation from the story collaborator before art proceeds.*
+
+Collaborator reviews the suggestion, confirms the lore entry, and updates the canon state manually.
+
+The Copilot did not change the lore entry. It surfaced the dependency.
+
+### Collaborator Request Drafting
+
+Copilot sees a scene with empty `scriptText` and a linked character with a pending storyboard. Copilot offers to draft a collaborator request: *Scene 04 is missing its dialogue pass. Here is a draft request you can send to the story collaborator.*
+
+The draft is displayed in a text area that the operator can edit or discard. The request is not sent automatically. The operator reviews and sends it through whatever communication channel is appropriate.
+
+### Label Suggestions
+
+A new artifact has been cataloged with only a title and a private note. Copilot reads the private note description (if authorized) and suggests: *Based on the description, this artifact may be classified as a lyric_fragment linked to a live show. Suggested labels: artifact_type: lyric_fragment, visibility: private, canon_status: reference_only, linked_issue: none.*
+
+The operator reviews the label suggestions, adjusts as needed, and applies them deliberately.
+
+### Blocker Summaries
+
+Copilot reads the current workflow board state and produces a summary: *Current blockers: 3 items in Needs Input are waiting for art review. 1 storyboard is waiting for lore confirmation. 2 scenes are waiting for dialogue drafts. Oldest unresolved item: 14 days.*
+
+The operator uses this summary to prioritize the day's work.
+
+---
+
+## Implementation Notes
+
+Current Copilot implementation files:
+
+- `src/components/studio/studio-copilot-panel.tsx`: renders the suggestion list
+- `src/lib/studio/demo-workflow.ts`: contains the placeholder suggestion data the Copilot reads
+- `src/types/studio-workflow.ts`: defines the `CopilotSuggestion` type
+
+When a real AI model is connected in Phase 6, the Copilot panel component should remain largely unchanged. The data it reads should shift from local placeholder suggestions to AI-generated suggestion objects that pass through the same type boundary.
+
+The type boundary should already define: suggestion text, linked card or record, suggested action type, approval state, and generated-by attribution.
+
+---
+
+## Warning for Future Agents
+
+The current Copilot panel appears in the Studio UI but contains no AI capability. It is a deliberate UI shell. Do not attempt to connect it to an external AI API, Vercel AI SDK, OpenAI, or any other external service without explicit instruction from the project owner.
+
+Do not expand the Copilot beyond deterministic local suggestions until Phase 6 is explicitly authorized.
+
+Do not use the Copilot to generate, suggest, or store real story canon.
+
+Do not allow AI-generated text to be committed to archive records, lore entries, or release descriptions without human review.

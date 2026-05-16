@@ -49,8 +49,14 @@ This repository currently contains the first seed-data prototype. Supabase is no
 - [docs/mvp.md](./docs/mvp.md): first shippable scope
 - [docs/design-language.md](./docs/design-language.md): visual, interaction, and sound language
 - [docs/roles.md](./docs/roles.md): user roles and permissions philosophy
-- [docs/content-model.md](./docs/content-model.md): story, archive, media, and database planning
+- [docs/content-model.md](./docs/content-model.md): story, archive, media, database planning, data classification, and visibility/approval states
 - [docs/roadmap.md](./docs/roadmap.md): modular feature roadmap
+- [docs/domain-strategy.md](./docs/domain-strategy.md): public vs Studio domain routing, middleware behavior, and auth considerations
+- [docs/studio-roadmap.md](./docs/studio-roadmap.md): phased Studio development plan from proof-of-concept through public archive publishing
+- [docs/studio-collaborator-workflow.md](./docs/studio-collaborator-workflow.md): intended collaborator experience, story dependencies, archive boundaries, and workflow philosophy
+- [docs/studio-copilot.md](./docs/studio-copilot.md): Copilot architecture, current deterministic behavior, and future AI assistant philosophy
+- [docs/studio-implementation-brief.md](./docs/studio-implementation-brief.md): active implementation spec for the Studio workflow board
+- [docs/artifact-intake-workflow.md](./docs/artifact-intake-workflow.md): artifact lifecycle, review lanes, spoiler handling, rights review, and publication flow
 - [docs/world/](./docs/world/): mythology, characters, resonance rules, visual symbolism, and soundtrack philosophy
 
 ## Repo Structure

@@ -469,6 +469,226 @@ Before Supabase:
 
 This keeps the first app build fast while preserving future database shape.
 
+## Data Classification Policy
+
+Not all records in the system carry the same weight, origin, or audience risk. Mixing placeholder data with real canon, or internal production records with public archive objects, is the most likely source of serious errors in this project.
+
+Every agent, developer, and collaborator must understand these five record classes before writing, reading, or modifying data.
+
+### Placeholder Workflow Data
+
+Placeholder workflow data is fake. It exists only to demonstrate the shape and feel of the Studio workflow.
+
+Location: `src/lib/studio/demo-workflow.ts`
+
+Characteristics:
+
+- Generic task names and descriptions that do not reference real Socarengue story content
+- Invented collaborator names or role-placeholder names
+- Review states, blockers, and linked records that demonstrate workflow logic only
+- Copilot suggestions that demonstrate the Copilot shell behavior
+- No real character names, scene reveals, lore depth, or unreleased story events
+
+Rules:
+
+- Never treat placeholder workflow data as canon
+- Never extract placeholder task names or descriptions and use them as real story content
+- Never commit more detailed or story-specific content to demo workflow files
+- Label every placeholder data file with a comment confirming its demo-only status
+
+### Demo-Only Records
+
+Demo-only records are seed data records that demonstrate the shape of story objects without containing real story truth.
+
+These may appear in:
+
+- `src/lib/seed/` or similar seed data files
+- Local typed seed content used to validate studio surfaces
+- Example characters, scenes, lore entries, or artifacts used during prototype development
+
+Characteristics:
+
+- Real enough to validate UI components and data relationships
+- Not real enough to reveal story secrets, character arcs, or plot events
+- Should be replaced with real canon records in Phase 2 when real story data migration begins
+
+Rules:
+
+- Do not commit demo-only records to a public repository that contains real canon records in the same namespace
+- Do not use demo character names or scene descriptions in marketing or collaborator review materials
+- Replace demo records with real canon records deliberately, not by layering on top of them
+
+### Real Canon Records
+
+Real canon records contain accepted world truth. A canon record is story evidence that has been confirmed by the project owner as accurate within the Socarengue mythology.
+
+Canon records include:
+
+- confirmed character identities, histories, and relationships
+- confirmed lore entries describing places, symbols, rituals, factions, and events
+- confirmed scene content including approved dialogue, emotional beats, and visual direction
+- confirmed artifact classifications and public descriptions
+- confirmed soundtrack cue relationships and scene associations
+
+Canon state values:
+
+- `candidate_canon`: likely true, under review, not yet locked
+- `canon`: accepted and locked world truth
+- `public_canon`: accepted, locked, and cleared for audience discovery
+- `contradicted`: intentionally conflicts with another account (unreliable narrator, mythologized memory)
+- `mythologized`: emotionally true, historically unstable
+- `non_canon_process`: process material, not story truth
+- `reference_only`: informs creative direction but is not world evidence
+- `retired`: formerly canon, no longer active
+
+Rules:
+
+- Only the project owner may promote a record to `canon` or `public_canon`
+- `candidate_canon` records must not be used as production dependencies without explicit confirmation
+- Real canon records must never be stored in placeholder data files
+- Real canon records must not be committed to a public repository without deliberate review of spoiler and rights implications
+
+### Collaborator Notes
+
+Collaborator notes are internal production commentary. They are not story truth. They are not archive material. They are the working conversation of a creative team.
+
+Notes may contain:
+
+- review decisions and reasoning
+- pacing and clarity feedback
+- revision requests
+- story questions and open decisions
+- emotional tone observations
+- production blockers and context
+
+Rules:
+
+- Notes are private by default
+- Notes must never appear in public archive views
+- Notes must never be treated as canon evidence
+- A note that contains a story insight or lore observation must be explicitly converted by the project owner into a real canon record before it can influence production
+
+### Public Archive Candidates
+
+A public archive candidate is a record that has completed internal review and may be ready for audience discovery. It is not yet public.
+
+An archive candidate has:
+
+- passed all required review lanes (story, music, art, credit, rights, as applicable)
+- been given an audience-safe description that reveals enough to be meaningful without overexplaining
+- passed spoiler review confirming the timing of its public revelation is deliberate
+- been explicitly marked `archive_candidate` by the operator
+
+An archive candidate becomes public only after the operator explicitly promotes it through the publication gate.
+
+---
+
+## Visibility States
+
+Visibility controls who can see a record at any given moment. Visibility is orthogonal to canon state: a canonical record can be private, and a public record may reveal only partial truth.
+
+| Visibility | Who can see it |
+|---|---|
+| `private` | Operator only or core internal archive |
+| `collaborator_review` | Assigned collaborators |
+| `music_review` | Music and legacy reviewers |
+| `art_review` | Artists and visual reviewers |
+| `story_review` | Story collaborators |
+| `promo_review` | Marketing and outreach reviewers |
+| `public_preview` | Invited preview audience |
+| `public` | General audience |
+| `hidden` | Deliberately concealed, even from most collaborators |
+
+Rules:
+
+- Public routes must query only records with `visibility: public` or `visibility: public_preview`
+- Private notes must never be selected in public queries, even if the parent record is public
+- `hidden` records require explicit operator access and should not appear in collaborator review lanes without deliberate assignment
+
+---
+
+## Approval States
+
+Approval state describes the workflow lifecycle of a record as it moves through review.
+
+| State | Meaning |
+|---|---|
+| `draft` | In progress, not ready for review |
+| `needs_input` | Missing a required asset, decision, or collaborator action |
+| `in_review` | Assigned to one or more review lanes |
+| `approved_internal` | All required internal reviews passed; not yet archive candidate |
+| `approved_for_release` | Cleared for publication through the publication gate |
+| `rejected` | Reviewed and deliberately not approved; reason should be noted |
+| `superseded` | Replaced by a newer version; retained as production history |
+| `archived` | Closed, no longer active in production |
+
+Approval state is separate from canon state and visibility state. A record may be `approved_internal` but still `private`, or `canon` but still `draft` in terms of its publication approval.
+
+---
+
+## Spoiler Handling
+
+Spoiler handling is a distinct review gate applied before any archive candidate is approved for public view.
+
+A spoiler risk exists when a record:
+
+- reveals a character's fate, identity, or arc before that reveal appears in a published issue
+- describes a plot event that occurs after the most recently published issue
+- shows an artifact whose significance has not yet been established in the public story
+- references a lore truth that is intended to be discovered gradually by the audience
+- contains audio, visual, or textual fragments from unreleased scenes
+
+Spoiler review questions:
+
+- Does this record reveal something the audience is not yet supposed to know?
+- Is the timing of this revelation consistent with the publication schedule?
+- If published now, does it reduce mystery rather than increase it?
+- Can a partial version be published that preserves the audience discovery experience?
+
+Spoiler review must be completed by the project owner before any archive candidate is promoted to `public` or `public_preview`.
+
+---
+
+## Rights Metadata
+
+Rights metadata tracks the usage permissions, attribution requirements, and clearance state for any record that includes material with third-party rights considerations.
+
+Rights-sensitive materials include:
+
+- performer likenesses and photographic portraits
+- song titles, lyrics, and musical compositions
+- band names, logos, or branded imagery
+- venue names and location references tied to specific events
+- licensed artwork, photography, or illustrations
+- collaborator-owned creative contributions that require attribution
+
+Rights fields on records:
+
+| Field | Purpose |
+|---|---|
+| `rightsStatus` | Overall rights clearance state |
+| `creditRequired` | Whether a credit line is required for use |
+| `creditText` | The approved credit string |
+| `usageRestrictions` | Specific restrictions on use (no promo, internal only, etc.) |
+| `rightsNotes` | Internal notes about the rights situation |
+| `likenessClearance` | Whether performer likeness has been approved |
+| `permissionType` | The type of permission: licensed, commissioned, fair use, original, etc. |
+
+Rights status values:
+
+- `unreviewed`: rights have not yet been checked
+- `needs_credit_check`: attribution requirements unclear
+- `needs_likeness_review`: performer or person likeness requires approval
+- `needs_music_clearance`: song, lyric, or track clearance required
+- `cleared_for_internal`: approved for internal production use
+- `cleared_for_release`: approved for public archive and release
+- `restricted`: explicitly restricted; must not be used without further review
+- `rejected`: not approved for use
+
+Rights metadata must be resolved to `cleared_for_release` before any archive candidate is promoted to public visibility.
+
+---
+
 ## First Implementation Data Contract
 
 The first implementation slice should include enough seed data to prove:

@@ -434,6 +434,48 @@ MVP interpretation:
 - The MVP should already feel emotionally immersive.
 - Build only the smallest coherent version of each capability.
 
+## Documentation Map
+
+Read these documents before making any implementation or architectural decisions:
+
+- [README.md](./README.md): project overview, architecture philosophy, and local development
+- [docs/platform-spec.md](./docs/platform-spec.md): product architecture and system philosophy
+- [docs/design-language.md](./docs/design-language.md): visual, interaction, and sound language
+- [docs/content-model.md](./docs/content-model.md): story objects, data classification policy, visibility states, approval states, and spoiler handling
+- [docs/domain-strategy.md](./docs/domain-strategy.md): two-domain routing model, middleware behavior, why global redirects are prohibited, and future auth requirements
+- [docs/studio-roadmap.md](./docs/studio-roadmap.md): phased Studio development plan — read this before proposing new features
+- [docs/studio-collaborator-workflow.md](./docs/studio-collaborator-workflow.md): collaborator experience, story dependencies, archive boundaries, and atmosphere philosophy
+- [docs/studio-copilot.md](./docs/studio-copilot.md): Copilot architecture, safe action patterns, privacy rules, and canon protection
+- [docs/studio-implementation-brief.md](./docs/studio-implementation-brief.md): active implementation spec for the Studio workflow board
+- [docs/artifact-intake-workflow.md](./docs/artifact-intake-workflow.md): full artifact lifecycle from upload through publication
+- [docs/roles.md](./docs/roles.md): collaborator roles and permissions philosophy
+- [docs/mvp.md](./docs/mvp.md): first shippable scope
+
+## Critical Warnings for Agents
+
+These are the most common ways an agent can make a serious mistake in this project.
+
+**Do not treat placeholder data as canon.**
+`src/lib/studio/demo-workflow.ts` contains demo-only workflow records. They are not real story content. Do not extract, expand, or reference them as Socarengue story truth.
+
+**Do not add a global redirect from `/` to `/studio`.**
+The host-aware middleware in `src/middleware.ts` rewrites only the root path for `socarengue.studio`. A global redirect would break the public Reader Mode homepage on `socarengue.com`. See `docs/domain-strategy.md`.
+
+**Do not connect the Copilot to external AI APIs.**
+The Studio Copilot panel is a deterministic local shell. Do not connect it to OpenAI, Anthropic, Vercel AI SDK, or any other external service without explicit instruction from the project owner.
+
+**Do not commit real unreleased story material.**
+Real character arcs, scene reveals, lore depth, unreleased plot events, and private canon must not be committed to any file in this repository without explicit review and authorization.
+
+**Do not add Supabase, auth, media upload, or external APIs until explicitly requested.**
+The current prototype is local and deterministic. All persistence, authentication, and external integrations are deferred to later phases. See `docs/studio-roadmap.md`.
+
+**Do not mix placeholder data with real canon records in any file or query.**
+Placeholder seed data and real canon data must live in separate modules and must never merge in a query result or component prop.
+
+**Do not expose internal workflow state on public routes.**
+Public routes (`socarengue.com`, `/archive`, `/preview/*`) must never surface workflow board data, private notes, review states, draft content, or unapproved artifacts.
+
 ## Documentation Standards
 
 Planning docs should:

@@ -35,6 +35,122 @@ For the current seed-data prototype:
 
 The MVP should prove the feeling of intake: recovered materials enter the archive, gain metadata, connect to story resonance, and become reviewable without becoming a CMS grid.
 
+## Artifact Lifecycle: State Path
+
+Every artifact entering the Studio follows a defined state path. This is not a linear pipeline — artifacts can pause, be blocked, or be sent back at any stage. But the path defines what an artifact must pass through before it can become public archive material.
+
+```
+Uploaded / Submitted
+    ↓
+Cataloged (metadata applied, story links established)
+    ↓
+Review Assigned (one or more review lanes: story, music, art, credit, rights)
+    ↓
+Review Complete (all assigned lanes approved or explicitly waived)
+    ↓
+Approved for Internal Use
+    ↓
+Archive Candidate (operator decision: this may become public mythology)
+    ↓
+Spoiler Review (timing clearance: is now the right moment?)
+    ↓
+Rights Review (clearance: are all third-party rights resolved?)
+    ↓
+Audience-Safe Description (public-facing text approved)
+    ↓
+Approved for Release
+    ↓
+Published (visibility promoted to public or public_preview)
+```
+
+An artifact can be held at any stage. An artifact blocked at rights review cannot advance regardless of story or art approval. An artifact that fails spoiler review must wait until the publication timing is right.
+
+States can also move backward. A rights-cleared artifact that later receives new information about the underlying material must return to rights review before proceeding.
+
+### Upload / Submission Stage
+
+In the current proof-of-concept, upload is simulated. No actual file is transferred. The intake form captures metadata and stores a placeholder record.
+
+When real upload is implemented (Phase 5 with Supabase Storage):
+
+- originals upload to a private storage bucket by default
+- a preview version may be generated or manually assigned
+- no public URL is created at upload time
+- the artifact record is created with `review_state: raw_signal` and `visibility: private`
+
+### Cataloging Stage
+
+Cataloging is the process of applying the metadata that makes an artifact meaningful in the archive.
+
+Required catalog fields:
+
+- artifact type (from the approved type list)
+- linked story objects (scene, issue, character, lore entry, track as applicable)
+- private operator note explaining origin and context
+- initial canon state assessment
+- initial visibility state
+- rights notes if any third-party material is present
+
+The artifact moves from `raw_signal` to `cataloged` when these fields are complete.
+
+### Review Assignment Stage
+
+The operator assigns one or more review lanes based on the artifact's content and risk profile.
+
+Review lane assignment guide:
+
+| Artifact content | Assign |
+|---|---|
+| Script, dialogue, scene pacing | Story review (Glen) |
+| Song, lyric, music reference, live show | Music review (Ovi) |
+| Storyboard, visual reference, final art | Art review (artist) |
+| Performer likeness, band reference | Music review + rights review |
+| Marketing material | Promo review |
+| Physical scan with legal or licensing context | Rights review |
+
+Review assignment does not block cataloging. An artifact can be fully cataloged before reviews are assigned.
+
+### Spoiler Review
+
+Spoiler review is a gate specific to archive candidacy and publication.
+
+Before any artifact is promoted to `public` or `public_preview`, the project owner must confirm:
+
+- this revelation does not arrive before its intended narrative moment
+- if published now, it deepens rather than undercuts the audience's experience
+- any partial publication is preferable to a full reveal if timing is uncertain
+
+Spoiler review is not a collaborator responsibility. It belongs to the project owner.
+
+### Audience-Safe Description
+
+The audience-safe description is the public-facing text that appears in the archive.
+
+It must:
+
+- be accurate relative to the artifact's story meaning
+- preserve mystery: reveal enough to be meaningful, not enough to explain everything
+- never include internal production context, revision history, or collaborator notes
+- be approved by the project owner before publication
+
+The audience-safe description is separate from the private notes field, which never appears publicly.
+
+### Publication Flow
+
+Publication is a deliberate operator action. It is not an automatic state transition.
+
+When an archive candidate has cleared spoiler review, rights review, and received an approved audience-safe description, the operator explicitly sets:
+
+- `visibility: public` or `visibility: public_preview`
+- `review_state: approved_for_release`
+- `publishedAt` timestamp
+
+Only then does the artifact appear on `socarengue.com/archive` or in public release views.
+
+The public archive query layer must select only records with `visibility: public` or `visibility: public_preview`. It must never select private notes, internal review history, rights documentation, or any field not explicitly designed for audience presentation.
+
+---
+
 ## Josh Intake
 
 Josh acts as the primary archive operator and story owner.

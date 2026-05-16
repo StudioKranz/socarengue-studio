@@ -8,7 +8,11 @@ Then read:
 - docs/design-language.md
 - docs/content-model.md
 - docs/studio-implementation-brief.md
-- docs/artifact-intake-workflow.md, if present
+- docs/artifact-intake-workflow.md
+- docs/domain-strategy.md
+- docs/studio-roadmap.md
+- docs/studio-collaborator-workflow.md
+- docs/studio-copilot.md
 
 Do not treat demo seed data as canon.
 Do not commit private or unreleased story material.
