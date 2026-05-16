@@ -53,6 +53,29 @@ export interface StudioCopilotSuggestion {
   sourceTaskIds: string[];
 }
 
+export interface StudioCollaboratorSession {
+  name: string;
+  role: StudioWorkflowOwnerRole;
+  currentFocus: string;
+  todaysSignal: string;
+  reviewMode: string;
+  isPlaceholder: true;
+}
+
+export interface StudioArtifactUploadShellField {
+  label: string;
+  value: string;
+}
+
+export interface StudioArtifactUploadShell {
+  title: string;
+  description: string;
+  fields: StudioArtifactUploadShellField[];
+  actionLabel: string;
+  href: string;
+  isPlaceholder: true;
+}
+
 export interface StudioWorkflowBoardData {
   projectId: string;
   title: string;
@@ -60,4 +83,6 @@ export interface StudioWorkflowBoardData {
   columns: StudioWorkflowColumn[];
   tasks: StudioWorkflowTask[];
   copilotSuggestions: StudioCopilotSuggestion[];
+  collaboratorSession: StudioCollaboratorSession;
+  artifactUploadShell: StudioArtifactUploadShell;
 }

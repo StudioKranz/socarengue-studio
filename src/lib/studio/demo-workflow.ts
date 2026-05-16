@@ -1,4 +1,6 @@
 import type {
+  StudioArtifactUploadShell,
+  StudioCollaboratorSession,
   StudioCopilotSuggestion,
   StudioWorkflowBoardData,
   StudioWorkflowColumn,
@@ -114,7 +116,7 @@ export const demoCopilotSuggestions: StudioCopilotSuggestion[] = [
   {
     id: "demo_suggestion_request_order",
     title: "Ask for the missing frame order",
-    body: "The storyboard placeholder is blocked. A concise collaborator request would unblock the board without exposing draft material.",
+    body: "The storyboard placeholder is blocked. Ask for frame order before dialogue work depends on the wrong visual sequence.",
     actionLabel: "Open intake",
     href: "/studio/intake",
     sourceTaskIds: ["demo_task_frame_order"],
@@ -134,7 +136,51 @@ export const demoCopilotSuggestions: StudioCopilotSuggestion[] = [
     href: "/studio/issues/the-street-remembers",
     sourceTaskIds: ["demo_task_cue_language"],
   },
+  {
+    id: "demo_suggestion_artifact_candidate",
+    title: "Label the archive candidate",
+    body: "The candidate object needs a plain public label, spoiler level, and rights status before it can move beyond internal review.",
+    actionLabel: "Stage metadata",
+    href: "/studio/intake",
+    sourceTaskIds: ["demo_task_public_candidate"],
+  },
+  {
+    id: "demo_suggestion_story_gap",
+    title: "Review the story gap",
+    body: "The missing bridge task is high priority. Add the smallest useful story note, then decide whether it belongs in drafting or review.",
+    actionLabel: "Open issue",
+    href: "/studio/issues/the-street-remembers",
+    sourceTaskIds: ["demo_task_missing_scene_bridge"],
+  },
 ];
+
+export const demoCollaboratorSession: StudioCollaboratorSession = {
+  name: "Glen",
+  role: "Story Collaborator",
+  currentFocus: "Issue 01 workflow review",
+  todaysSignal: "One blocked storyboard request is holding dialogue work.",
+  reviewMode: "Demo session only. No auth, permissions, or saved identity.",
+  isPlaceholder: true,
+};
+
+export const demoArtifactUploadShell: StudioArtifactUploadShell = {
+  title: "Artifact Intake Shell",
+  description:
+    "A future upload path for recovered material. This shell previews the metadata workflow only; it does not upload, save, or contact storage.",
+  fields: [
+    { label: "Artifact type", value: "Storyboard / frame / script fragment" },
+    { label: "Linked issue or scene", value: "Demo issue workflow" },
+    { label: "Canon status", value: "Reference only" },
+    { label: "Visibility", value: "Collaborator review" },
+    { label: "Spoiler level", value: "Internal reveal" },
+    { label: "Rights status", value: "Needs credit check" },
+    { label: "Archive candidate", value: "Not public yet" },
+    { label: "Notes", value: "Use notes to protect context before curation." },
+  ],
+  actionLabel: "Open intake shell",
+  href: "/studio/intake",
+  isPlaceholder: true,
+};
 
 export const demoStudioWorkflow: StudioWorkflowBoardData = {
   projectId: "project_socarengue",
@@ -144,6 +190,8 @@ export const demoStudioWorkflow: StudioWorkflowBoardData = {
   columns: studioWorkflowColumns,
   tasks: demoStudioWorkflowTasks,
   copilotSuggestions: demoCopilotSuggestions,
+  collaboratorSession: demoCollaboratorSession,
+  artifactUploadShell: demoArtifactUploadShell,
 };
 
 export function getDemoStudioWorkflow(): StudioWorkflowBoardData {

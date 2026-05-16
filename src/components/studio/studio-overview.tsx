@@ -1,3 +1,5 @@
+import { ArtifactUploadShell } from "@/components/studio/artifact-upload-shell";
+import { CollaboratorSessionPanel } from "@/components/studio/collaborator-session-panel";
 import { IssuePanel } from "@/components/studio/issue-panel";
 import { StudioCopilotPanel } from "@/components/studio/studio-copilot-panel";
 import { WorkflowBoard } from "@/components/studio/workflow-board";
@@ -41,10 +43,10 @@ export function StudioOverview({ data, workflow }: StudioOverviewProps) {
             <MetadataLine label="Signal index" value="archive inventory" />
             <div className="mt-4 grid grid-cols-2 gap-3">
               {inventory.map(([label, value]) => (
-              <div key={label} className="border border-paper/12 bg-ink/42 p-4">
-                <p className="font-display text-3xl text-ember">{value}</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.2em] text-paper/50">{label}</p>
-              </div>
+                <div key={label} className="border border-paper/12 bg-ink/42 p-4">
+                  <p className="font-display text-3xl text-ember">{value}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.2em] text-paper/50">{label}</p>
+                </div>
               ))}
             </div>
           </div>
@@ -73,7 +75,11 @@ export function StudioOverview({ data, workflow }: StudioOverviewProps) {
 
       <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_360px]">
         <WorkflowBoard workflow={workflow} />
-        <StudioCopilotPanel suggestions={workflow.copilotSuggestions} />
+        <div className="space-y-6">
+          <CollaboratorSessionPanel session={workflow.collaboratorSession} />
+          <StudioCopilotPanel suggestions={workflow.copilotSuggestions} />
+          <ArtifactUploadShell shell={workflow.artifactUploadShell} />
+        </div>
       </div>
     </div>
   );
