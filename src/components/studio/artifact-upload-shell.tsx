@@ -13,13 +13,20 @@ export function ArtifactUploadShell({ shell }: ArtifactUploadShellProps) {
       <h2 className="mt-3 font-display text-3xl leading-8 text-paper">{shell.title}</h2>
       <p className="mt-3 text-sm leading-6 text-paper/62">{shell.description}</p>
 
-      <div className="mt-5 space-y-2">
+      <div className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-1">
         {shell.fields.map((field) => (
           <div key={field.label} className="grid gap-1 rounded-[4px] border border-paper/10 bg-ink/35 p-3">
             <span className="text-[0.68rem] uppercase tracking-[0.18em] text-paper/42">{field.label}</span>
             <span className="text-sm leading-5 text-paper/74">{field.value}</span>
           </div>
         ))}
+      </div>
+
+      <div className="mt-4 rounded-[4px] border border-paper/10 bg-paper/[0.03] p-3">
+        <p className="text-[0.68rem] uppercase tracking-[0.18em] text-paper/42">File transfer</p>
+        <p className="mt-1 text-sm leading-6 text-paper/68">
+          Disabled for this demo. The shell previews cataloging metadata only; no file, database row, or external storage is created.
+        </p>
       </div>
 
       <Link

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
 import type { StudioWorkflowTask } from "@/types/studio-workflow";
 
 const priorityClass: Record<StudioWorkflowTask["priority"], string> = {
@@ -12,14 +11,19 @@ const priorityClass: Record<StudioWorkflowTask["priority"], string> = {
 
 interface WorkflowCardProps {
   task: StudioWorkflowTask;
+  isSelected: boolean;
+  onSelect: () => void;
 }
 
-export function WorkflowCard({ task }: WorkflowCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
+export function WorkflowCard({ task, isSelected, onSelect }: WorkflowCardProps) {
   const primaryLinkedRecord = task.linkedRecords[0];
 
   return (
-    <article className="rounded-[6px] border border-paper/12 bg-ink/58 p-4 shadow-[0_18px_48px_rgba(0,0,0,0.22)]">
+    <article
+      className={`rounded-[6px] border bg-ink/58 p-3 shadow-[0_18px_48px_rgba(0,0,0,0.22)] transition ${
+        isSelected ? "border-signal/45 shadow-signal" : "border-paper/12 hover:border-paper/24"
+      }`}
+    >
       <div className="flex flex-wrap items-center justify-between gap-2">
         <span className={`rounded-[4px] border px-2 py-1 text-[0.62rem] uppercase tracking-[0.18em] ${priorityClass[task.priority]}`}>
           {task.priority}
@@ -27,10 +31,10 @@ export function WorkflowCard({ task }: WorkflowCardProps) {
         <span className="text-[0.62rem] uppercase tracking-[0.18em] text-paper/36">Placeholder</span>
       </div>
 
-      <h3 className="mt-4 font-display text-xl leading-6 text-paper">{task.title}</h3>
-      <p className="mt-3 text-sm leading-6 text-paper/62">{task.summary}</p>
+      <h3 className="mt-3 font-display text-xl leading-6 text-paper">{task.title}</h3>
+      <p className="mt-2 text-sm leading-6 text-paper/60">{task.summary}</p>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <div className="mt-3 flex flex-wrap gap-2">
         <span className="rounded-[4px] border border-paper/10 bg-paper/[0.03] px-2 py-1 text-[0.68rem] uppercase tracking-[0.14em] text-paper/64">
           {task.ownerRole}
         </span>
@@ -64,20 +68,16 @@ export function WorkflowCard({ task }: WorkflowCardProps) {
 
       <button
         type="button"
-        className="mt-4 w-full rounded-[4px] border border-paper/10 bg-paper/[0.03] px-3 py-2 text-left text-[0.68rem] uppercase tracking-[0.18em] text-paper/56 transition hover:border-signal/40 hover:text-signal"
-        aria-expanded={isExpanded}
-        onClick={() => setIsExpanded((current) => !current)}
+        className={`mt-4 w-full rounded-[4px] border px-3 py-2 text-left text-[0.68rem] uppercase tracking-[0.18em] transition ${
+          isSelected
+            ? "border-signal/35 bg-signal/10 text-signal"
+            : "border-paper/10 bg-paper/[0.03] text-paper/56 hover:border-signal/40 hover:text-signal"
+        }`}
+        aria-pressed={isSelected}
+        onClick={onSelect}
       >
-        {isExpanded ? "Hide next action" : "Show next action"}
+        {isSelected ? "Showing detail below" : "Inspect signal"}
       </button>
-
-      {isExpanded ? (
-        <div className="mt-3 rounded-[4px] border border-ember/18 bg-ember/[0.06] p-3">
-          <p className="text-[0.68rem] uppercase tracking-[0.18em] text-ember/80">Next action</p>
-          <p className="mt-2 text-sm leading-6 text-paper/76">{task.nextAction}</p>
-          {task.blockedBy ? <p className="mt-2 text-xs leading-5 text-paper/50">{task.blockedBy}</p> : null}
-        </div>
-      ) : null}
 
       <div className="mt-3 flex flex-wrap gap-2">
         {task.tags.map((tag) => (

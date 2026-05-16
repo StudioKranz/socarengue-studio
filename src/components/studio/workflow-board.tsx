@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import type { StudioWorkflowBoardData } from "@/types/studio-workflow";
+import { TaskDetailPanel } from "@/components/studio/task-detail-panel";
 import { WorkflowCard } from "@/components/studio/workflow-card";
 import { MetadataLine } from "@/components/ui/metadata-line";
 
@@ -7,6 +11,11 @@ interface WorkflowBoardProps {
 }
 
 export function WorkflowBoard({ workflow }: WorkflowBoardProps) {
+  const initialTask = workflow.tasks.find((task) => task.priority === "high") ?? workflow.tasks[0];
+  const [selectedTaskId, setSelectedTaskId] = useState(initialTask?.id);
+
+  const selectedTask = workflow.tasks.find((task) => task.id === selectedTaskId) ?? initialTask;
+
   return (
     <section className="rounded-[6px] border border-paper/12 bg-ink/42 p-4 md:p-5">
       <div className="flex flex-wrap items-end justify-between gap-4 px-1 pb-4">
@@ -17,7 +26,7 @@ export function WorkflowBoard({ workflow }: WorkflowBoardProps) {
         <p className="max-w-xl text-sm leading-6 text-paper/58">{workflow.warning}</p>
       </div>
 
-      <div className="-mx-4 overflow-x-auto px-4 pb-3 md:-mx-5 md:px-5">
+      <div className="-mx-4 overflow-x-auto px-4 pb-4 md:-mx-5 md:px-5" aria-label="Studio workflow lanes">
         <div className="flex min-w-max gap-4">
           {workflow.columns.map((column) => {
             const tasks = workflow.tasks.filter((task) => task.columnId === column.id);
@@ -25,7 +34,7 @@ export function WorkflowBoard({ workflow }: WorkflowBoardProps) {
             return (
               <div
                 key={column.id}
-                className="min-h-[300px] w-[min(84vw,340px)] min-w-[300px] rounded-[6px] border border-paper/10 bg-storm/28 p-3 md:w-[320px] lg:w-[340px]"
+                className="min-h-[340px] w-[min(86vw,340px)] min-w-[300px] rounded-[6px] border border-paper/10 bg-storm/28 p-3 md:w-[320px] lg:w-[340px]"
               >
                 <div className="mb-4 border-b border-paper/10 pb-3">
                   <div className="flex items-start justify-between gap-3">
@@ -39,7 +48,12 @@ export function WorkflowBoard({ workflow }: WorkflowBoardProps) {
 
                 <div className="space-y-3">
                   {tasks.map((task) => (
-                    <WorkflowCard key={task.id} task={task} />
+                    <WorkflowCard
+                      key={task.id}
+                      task={task}
+                      isSelected={task.id === selectedTask?.id}
+                      onSelect={() => setSelectedTaskId(task.id)}
+                    />
                   ))}
                 </div>
               </div>
@@ -47,6 +61,8 @@ export function WorkflowBoard({ workflow }: WorkflowBoardProps) {
           })}
         </div>
       </div>
+
+      {selectedTask ? <TaskDetailPanel task={selectedTask} /> : null}
     </section>
   );
 }

@@ -73,13 +73,12 @@ export function StudioOverview({ data, workflow }: StudioOverviewProps) {
         </div>
       </div>
 
-      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_360px]">
-        <WorkflowBoard workflow={workflow} />
-        <div className="space-y-6">
-          <CollaboratorSessionPanel session={workflow.collaboratorSession} />
-          <StudioCopilotPanel suggestions={workflow.copilotSuggestions} />
-          <ArtifactUploadShell shell={workflow.artifactUploadShell} />
-        </div>
+      <WorkflowBoard workflow={workflow} />
+
+      <div className="grid gap-6 xl:grid-cols-[minmax(260px,0.8fr)_minmax(0,1.1fr)_minmax(260px,0.8fr)]">
+        <CollaboratorSessionPanel session={workflow.collaboratorSession} />
+        <StudioCopilotPanel suggestions={workflow.copilotSuggestions} tasks={workflow.tasks} />
+        <ArtifactUploadShell shell={workflow.artifactUploadShell} />
       </div>
     </div>
   );
