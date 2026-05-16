@@ -1,0 +1,607 @@
+diff -ruN old/src/components/studio/studio-overview.tsx new/src/components/studio/studio-overview.tsx
+--- old/src/components/studio/studio-overview.tsx	2026-05-15 21:03:06.043370146 +0000
++++ new/src/components/studio/studio-overview.tsx	2026-05-15 21:03:13.160721984 +0000
+@@ -1,7 +1,8 @@
+ import { IssuePanel } from "@/components/studio/issue-panel";
+-import { SignalFrame } from "@/components/ui/signal-frame";
+-import { MetadataLine } from "@/components/ui/metadata-line";
++import { StudioWorkflowBoard } from "@/components/studio/studio-workflow-board";
+ import { EmptyState } from "@/components/ui/empty-state";
++import { MetadataLine } from "@/components/ui/metadata-line";
++import { SignalFrame } from "@/components/ui/signal-frame";
+ import { getStudioOverview } from "@/lib/content/queries";
+ 
+ type StudioOverviewData = ReturnType<typeof getStudioOverview>;
+@@ -11,34 +12,34 @@
+ }
+ 
+ export function StudioOverview({ data }: StudioOverviewProps) {
+-  const inventory = [
+-    ["Scenes", data.scenes.length],
+-    ["Artifacts", data.artifacts.length],
+-    ["Lore", data.loreEntries.length],
+-    ["Tracks", data.tracks.length],
+-    ["Cues", data.soundtrackCues.length],
+-    ["Media", data.mediaAssets.length],
+-  ];
+-
+   return (
+     <div className="space-y-6">
+-      <SignalFrame className="p-8">
+-        <MetadataLine label="Studio transmission" value={data.release.title} />
+-        <div className="mt-5 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
++      <StudioWorkflowBoard
++        projectTitle={data.project.title}
++        issueTitle={data.issue.title}
++        sceneCount={data.scenes.length}
++        artifactCount={data.artifacts.length}
++        loreCount={data.loreEntries.length}
++      />
++
++      <SignalFrame className="p-6 md:p-8">
++        <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+           <div>
+-            <h1 className="font-display text-5xl leading-tight text-paper md:text-6xl">{data.project.title}</h1>
+-            <p className="mt-5 max-w-3xl text-lg leading-8 text-paper/74">{data.project.description}</p>
++            <MetadataLine label="Reference stack" value={data.release.title} />
++            <h2 className="mt-4 font-display text-4xl leading-tight text-paper md:text-5xl">
++              Keep the existing story material visible underneath the work board.
++            </h2>
++            <p className="mt-4 max-w-3xl text-base leading-7 text-paper/66">
++              The board should not replace the archive. It should sit on top of scenes, artifacts, lore, tracks, and cue data so a collaborator can move from task to source without losing context.
++            </p>
+           </div>
+-          <div>
+-            <MetadataLine label="Signal index" value="archive inventory" />
+-            <div className="mt-4 grid grid-cols-2 gap-3">
+-              {inventory.map(([label, value]) => (
+-              <div key={label} className="border border-paper/12 bg-ink/42 p-4">
+-                <p className="font-display text-3xl text-ember">{value}</p>
+-                <p className="mt-1 text-xs uppercase tracking-[0.2em] text-paper/50">{label}</p>
+-              </div>
+-              ))}
+-            </div>
++          <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-2">
++            <InventoryTile label="Scenes" value={data.scenes.length} />
++            <InventoryTile label="Artifacts" value={data.artifacts.length} />
++            <InventoryTile label="Lore" value={data.loreEntries.length} />
++            <InventoryTile label="Tracks" value={data.tracks.length} />
++            <InventoryTile label="Cues" value={data.soundtrackCues.length} />
++            <InventoryTile label="Media" value={data.mediaAssets.length} />
+           </div>
+         </div>
+       </SignalFrame>
+@@ -48,9 +49,14 @@
+         <div className="space-y-4 rounded-[6px] border border-paper/12 bg-ink/45 p-6">
+           <MetadataLine label="Archive pulse" value="connected story material" />
+           {data.artifacts.length > 0 ? (
+-            data.artifacts.slice(0, 3).map((artifact) => (
++            data.artifacts.slice(0, 4).map((artifact) => (
+               <div key={artifact.id} className="border-b border-paper/10 pb-4 last:border-b-0 last:pb-0">
+-                <p className="font-display text-xl text-paper">{artifact.title}</p>
++                <div className="flex flex-wrap items-start justify-between gap-3">
++                  <p className="font-display text-xl text-paper">{artifact.title}</p>
++                  <span className="rounded-full border border-paper/12 px-2.5 py-1 text-[0.62rem] uppercase tracking-[0.16em] text-paper/42">
++                    {artifact.visibility}
++                  </span>
++                </div>
+                 <p className="mt-2 text-sm leading-6 text-paper/62">{artifact.publicDescription}</p>
+               </div>
+             ))
+@@ -65,3 +71,12 @@
+     </div>
+   );
+ }
++
++function InventoryTile({ label, value }: { label: string; value: number }) {
++  return (
++    <div className="border border-paper/12 bg-ink/42 p-4">
++      <p className="font-display text-3xl text-ember">{value}</p>
++      <p className="mt-1 text-xs uppercase tracking-[0.2em] text-paper/50">{label}</p>
++    </div>
++  );
++}
+diff -ruN old/src/components/studio/studio-workflow-board.tsx new/src/components/studio/studio-workflow-board.tsx
+--- old/src/components/studio/studio-workflow-board.tsx	1970-01-01 00:00:00.000000000 +0000
++++ new/src/components/studio/studio-workflow-board.tsx	2026-05-15 21:04:43.072598343 +0000
+@@ -0,0 +1,250 @@
++import {
++  getTasksForLane,
++  studioFocus,
++  studioLanes,
++  studioTasks,
++  type StudioPriority,
++  type StudioTask,
++} from "@/lib/studio/workflow";
++
++interface StudioWorkflowBoardProps {
++  projectTitle: string;
++  issueTitle: string;
++  sceneCount: number;
++  artifactCount: number;
++  loreCount: number;
++}
++
++const priorityStyles: Record<StudioPriority, string> = {
++  high: "border-blood/60 bg-blood/15 text-red-100",
++  medium: "border-ember/50 bg-ember/12 text-ember",
++  low: "border-paper/18 bg-paper/5 text-paper/58",
++};
++
++const laneAccents = {
++  gaps: "from-ember/18 to-transparent",
++  "needs-input": "from-blood/20 to-transparent",
++  drafting: "from-signal/16 to-transparent",
++  review: "from-violet-400/12 to-transparent",
++  "archive-candidate": "from-paper/12 to-transparent",
++};
++
++function priorityLabel(priority: StudioPriority) {
++  return priority.charAt(0).toUpperCase() + priority.slice(1);
++}
++
++function countPriority(priority: StudioPriority) {
++  return studioTasks.filter((task) => task.priority === priority).length;
++}
++
++function TaskCard({ task }: { task: StudioTask }) {
++  return (
++    <article className="group rounded-[10px] border border-paper/12 bg-ink/62 p-4 transition hover:border-signal/42 hover:bg-storm/60 hover:shadow-signal">
++      <div className="flex items-start justify-between gap-3">
++        <div>
++          <p className="text-[0.62rem] uppercase tracking-[0.22em] text-signal/62">{task.type}</p>
++          <h3 className="mt-2 font-display text-xl leading-6 text-paper">{task.title}</h3>
++        </div>
++        <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[0.62rem] uppercase tracking-[0.18em] ${priorityStyles[task.priority]}`}>
++          {priorityLabel(task.priority)}
++        </span>
++      </div>
++
++      <p className="mt-3 text-sm leading-6 text-paper/66">{task.summary}</p>
++
++      <dl className="mt-4 grid grid-cols-2 gap-2 text-xs">
++        <div className="rounded-[6px] border border-paper/10 bg-paper/5 p-3">
++          <dt className="uppercase tracking-[0.18em] text-paper/34">Owner</dt>
++          <dd className="mt-1 text-paper/78">{task.owner}</dd>
++        </div>
++        <div className="rounded-[6px] border border-paper/10 bg-paper/5 p-3">
++          <dt className="uppercase tracking-[0.18em] text-paper/34">Due</dt>
++          <dd className="mt-1 text-paper/78">{task.dueLabel}</dd>
++        </div>
++      </dl>
++
++      {task.blocker ? (
++        <div className="mt-3 rounded-[6px] border border-blood/30 bg-blood/10 p-3 text-xs leading-5 text-red-100/82">
++          <span className="uppercase tracking-[0.18em] text-red-100/50">Blocker</span>
++          <p className="mt-1">{task.blocker}</p>
++        </div>
++      ) : null}
++
++      <div className="mt-3 rounded-[6px] border border-signal/24 bg-signal/8 p-3 text-xs leading-5 text-paper/72">
++        <span className="uppercase tracking-[0.18em] text-signal/62">Next step</span>
++        <p className="mt-1">{task.nextStep}</p>
++      </div>
++
++      <div className="mt-4 flex flex-wrap gap-2">
++        {task.tags.map((tag) => (
++          <span key={tag} className="rounded-full border border-paper/10 px-2.5 py-1 text-[0.65rem] uppercase tracking-[0.14em] text-paper/42">
++            {tag}
++          </span>
++        ))}
++      </div>
++    </article>
++  );
++}
++
++export function StudioWorkflowBoard({
++  projectTitle,
++  issueTitle,
++  sceneCount,
++  artifactCount,
++  loreCount,
++}: StudioWorkflowBoardProps) {
++  const blockedTasks = studioTasks.filter((task) => task.blocker).length;
++  const glenTasks = studioTasks.filter((task) => task.owner === "Glen" || task.collaborator === "Glen").length;
++
++  return (
++    <div className="space-y-6">
++      <section className="overflow-hidden rounded-[14px] border border-paper/12 bg-ink/72 shadow-signal">
++        <div className="border-b border-paper/10 bg-gradient-to-r from-blood/18 via-ink/70 to-signal/10 px-6 py-3 text-xs uppercase tracking-[0.24em] text-paper/62">
++          Review prototype / not a final product decision
++        </div>
++        <div className="grid gap-8 p-6 lg:grid-cols-[1.15fr_0.85fr] lg:p-8">
++          <div>
++            <p className="text-xs uppercase tracking-[0.3em] text-signal/72">Socarengue Studio / Writer workflow</p>
++            <h1 className="mt-4 font-display text-5xl leading-tight text-paper md:text-7xl">Make the next creative move obvious.</h1>
++            <p className="mt-5 max-w-3xl text-lg leading-8 text-paper/70">
++              A collaborator-facing Studio view where Glen can see story bible gaps, blocked dialogue, approval requests, and archive candidates without digging through files.
++            </p>
++            <div className="mt-7 grid gap-3 sm:grid-cols-4">
++              <Metric label="Glen focus" value={String(glenTasks)} detail="related cards" />
++              <Metric label="Blocked" value={String(blockedTasks)} detail="needs input" />
++              <Metric label="High priority" value={String(countPriority("high"))} detail="move first" />
++              <Metric label="Archive" value="2" detail="candidates" />
++            </div>
++          </div>
++          <aside className="rounded-[10px] border border-paper/12 bg-paper/5 p-5">
++            <p className="text-xs uppercase tracking-[0.26em] text-ember/72">Glen logs in</p>
++            <h2 className="mt-3 font-display text-3xl text-paper">Writer view</h2>
++            <p className="mt-3 text-sm leading-6 text-paper/62">
++              Current context: {projectTitle}, {issueTitle}. The system should show what Glen can draft now, what is blocked by frames, and what needs review before it becomes canon.
++            </p>
++            <div className="mt-5 space-y-3">
++              {studioFocus.map((item) => (
++                <div key={item.label} className="border-l border-signal/34 pl-4">
++                  <p className="text-[0.62rem] uppercase tracking-[0.2em] text-signal/62">{item.label}</p>
++                  <p className="mt-1 text-sm leading-6 text-paper/72">{item.value}</p>
++                </div>
++              ))}
++            </div>
++          </aside>
++        </div>
++      </section>
++
++      <section className="grid gap-6 xl:grid-cols-[1fr_360px]">
++        <div className="overflow-hidden rounded-[14px] border border-paper/12 bg-ink/56">
++          <div className="flex flex-wrap items-end justify-between gap-4 border-b border-paper/10 p-5">
++            <div>
++              <p className="text-xs uppercase tracking-[0.25em] text-signal/62">Workflow board</p>
++              <h2 className="mt-2 font-display text-3xl text-paper">Gap -> input -> draft -> review -> archive</h2>
++            </div>
++            <p className="max-w-xl text-sm leading-6 text-paper/50">
++              The lanes are intentionally production-specific. They expose creative dependency, not just generic task status.
++            </p>
++          </div>
++
++          <div className="grid gap-4 overflow-x-auto p-5 lg:grid-cols-5">
++            {studioLanes.map((lane) => {
++              const laneTasks = getTasksForLane(lane.id);
++
++              return (
++                <section key={lane.id} className="min-w-[280px] rounded-[12px] border border-paper/10 bg-paper/[0.035]">
++                  <div className={`rounded-t-[12px] border-b border-paper/10 bg-gradient-to-b ${laneAccents[lane.id]} p-4`}>
++                    <div className="flex items-start justify-between gap-3">
++                      <div>
++                        <h3 className="font-display text-2xl text-paper">{lane.title}</h3>
++                        <p className="mt-2 text-xs leading-5 text-paper/46">{lane.description}</p>
++                      </div>
++                      <span className="rounded-full border border-paper/14 px-2.5 py-1 text-xs text-paper/56">{laneTasks.length}</span>
++                    </div>
++                  </div>
++                  <div className="space-y-3 p-3">
++                    {laneTasks.map((task) => (
++                      <TaskCard key={task.id} task={task} />
++                    ))}
++                  </div>
++                </section>
++              );
++            })}
++          </div>
++        </div>
++
++        <aside className="space-y-6">
++          <section className="rounded-[14px] border border-signal/22 bg-signal/8 p-5 shadow-signal">
++            <p className="text-xs uppercase tracking-[0.26em] text-signal/72">Socarengue Copilot</p>
++            <h2 className="mt-3 font-display text-3xl text-paper">Suggested next action</h2>
++            <p className="mt-3 text-sm leading-6 text-paper/70">
++              Glen should not start final Underpass dialogue yet. Ask storyboard for frame timing, then draft the call-and-response once the reveal is sequenced.
++            </p>
++            <div className="mt-5 space-y-3 text-sm leading-6 text-paper/64">
++              <AiAction title="Request detail" body="Ask art whether frames 08-12 are one continuous reveal or three beats." />
++              <AiAction title="Open source" body="Link directly to Underpass Chorus, Torn Underpass Poster, and the soundtrack cue." />
++              <AiAction title="Safe draft" body="Let Glen draft placeholder rhythm lines marked non-canon until frames land." />
++            </div>
++          </section>
++
++          <section className="rounded-[14px] border border-paper/12 bg-ink/56 p-5">
++            <p className="text-xs uppercase tracking-[0.26em] text-ember/72">Artifact upload labels</p>
++            <h2 className="mt-3 font-display text-3xl text-paper">Public archive readiness</h2>
++            <div className="mt-5 grid gap-2 text-sm">
++              <LabelRow label="Visibility" value="Internal / Candidate / Public" />
++              <LabelRow label="Canon" value="Draft / Canon / Reference only" />
++              <LabelRow label="Rights" value="Owned / Needs review / Reference" />
++              <LabelRow label="Spoiler" value="None / Mild / Major" />
++              <LabelRow label="Linked to" value="Scene, lore, track, issue" />
++            </div>
++          </section>
++
++          <section className="rounded-[14px] border border-paper/12 bg-ink/56 p-5">
++            <p className="text-xs uppercase tracking-[0.26em] text-paper/42">Signal inventory</p>
++            <dl className="mt-4 grid grid-cols-3 gap-2 text-center">
++              <MiniInventory label="Scenes" value={sceneCount} />
++              <MiniInventory label="Artifacts" value={artifactCount} />
++              <MiniInventory label="Lore" value={loreCount} />
++            </dl>
++          </section>
++        </aside>
++      </section>
++    </div>
++  );
++}
++
++function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
++  return (
++    <div className="rounded-[8px] border border-paper/12 bg-paper/5 p-4">
++      <p className="font-display text-3xl text-ember">{value}</p>
++      <p className="mt-1 text-[0.62rem] uppercase tracking-[0.2em] text-paper/42">{label}</p>
++      <p className="mt-2 text-xs text-paper/46">{detail}</p>
++    </div>
++  );
++}
++
++function AiAction({ title, body }: { title: string; body: string }) {
++  return (
++    <div className="rounded-[8px] border border-signal/18 bg-ink/48 p-3">
++      <p className="text-xs uppercase tracking-[0.2em] text-signal/60">{title}</p>
++      <p className="mt-1">{body}</p>
++    </div>
++  );
++}
++
++function LabelRow({ label, value }: { label: string; value: string }) {
++  return (
++    <div className="flex items-center justify-between gap-4 border-b border-paper/10 py-2 last:border-b-0">
++      <span className="text-paper/42">{label}</span>
++      <span className="text-right text-paper/72">{value}</span>
++    </div>
++  );
++}
++
++function MiniInventory({ label, value }: { label: string; value: number }) {
++  return (
++    <div className="rounded-[8px] border border-paper/10 bg-paper/5 p-3">
++      <dt className="font-display text-2xl text-paper">{value}</dt>
++      <dd className="mt-1 text-[0.6rem] uppercase tracking-[0.18em] text-paper/38">{label}</dd>
++    </div>
++  );
++}
+diff -ruN old/src/lib/studio/workflow.ts new/src/lib/studio/workflow.ts
+--- old/src/lib/studio/workflow.ts	1970-01-01 00:00:00.000000000 +0000
++++ new/src/lib/studio/workflow.ts	2026-05-15 21:03:13.185221313 +0000
+@@ -0,0 +1,246 @@
++export type StudioLaneId =
++  | "gaps"
++  | "needs-input"
++  | "drafting"
++  | "review"
++  | "archive-candidate";
++
++export type StudioPriority = "high" | "medium" | "low";
++
++export interface StudioLane {
++  id: StudioLaneId;
++  title: string;
++  description: string;
++}
++
++export interface StudioTask {
++  id: string;
++  laneId: StudioLaneId;
++  title: string;
++  type: string;
++  storyArea: string;
++  owner: string;
++  collaborator?: string;
++  priority: StudioPriority;
++  dueLabel: string;
++  statusLabel: string;
++  blocker?: string;
++  decisionState: "proposal" | "needs-comment" | "needs-approval" | "ready-to-work" | "not-final";
++  summary: string;
++  nextStep: string;
++  aiAssist: string;
++  linkedItems: string[];
++  tags: string[];
++}
++
++export const studioLanes: StudioLane[] = [
++  {
++    id: "gaps",
++    title: "Gaps / Intake",
++    description: "Story bible holes, untriaged uploads, or questions that need shape.",
++  },
++  {
++    id: "needs-input",
++    title: "Needs Input",
++    description: "Blocked until another collaborator, frame order, or approval note arrives.",
++  },
++  {
++    id: "drafting",
++    title: "Drafting",
++    description: "Ready for a writer, artist, or archive editor to move now.",
++  },
++  {
++    id: "review",
++    title: "Review / Approve",
++    description: "Needs a decision before becoming canon, production direction, or public copy.",
++  },
++  {
++    id: "archive-candidate",
++    title: "Archive Candidate",
++    description: "Potential public-facing lore, artifact, or behind-the-scenes material.",
++  },
++];
++
++export const studioTasks: StudioTask[] = [
++  {
++    id: "task-underpass-dialogue-frames",
++    laneId: "needs-input",
++    title: "Underpass Chorus dialogue is blocked by missing frame order",
++    type: "Dialogue dependency",
++    storyArea: "Issue 01 / Underpass Chorus",
++    owner: "Glen",
++    collaborator: "Storyboard / Art",
++    priority: "high",
++    dueLabel: "Before dialogue pass",
++    statusLabel: "Blocked",
++    blocker: "Needs rough order for frames 08-12 before final call-and-response dialogue can be written.",
++    decisionState: "needs-comment",
++    summary:
++      "Glen can sketch the emotional rhythm, but the final line breaks depend on whether the poster wall, rail tap, and city response are one beat or three separate frames.",
++    nextStep: "Request a rough frame sequence from storyboard and attach it to the scene workspace.",
++    aiAssist:
++      "Draft a short request to art: 'Can you confirm whether frames 08-12 play as one continuous reveal or separate beats? Glen needs timing before final dialogue.'",
++    linkedItems: ["scene_underpass_chorus", "artifact_underpass_poster", "cue_underpass_chorus"],
++    tags: ["dialogue", "storyboard", "blocked", "Glen"],
++  },
++  {
++    id: "task-mara-voice-gap",
++    laneId: "gaps",
++    title: "Define Mara's voice rule before new scene dialogue",
++    type: "Story bible gap",
++    storyArea: "Character / Mara Vale",
++    owner: "Glen",
++    priority: "high",
++    dueLabel: "This week",
++    statusLabel: "Open gap",
++    decisionState: "ready-to-work",
++    summary:
++      "Mara notices rhythm in broken infrastructure, but the bible needs a usable dialogue rule: what does she say plainly, what does she only notice, and what does she avoid naming?",
++    nextStep: "Write three voice constraints and one sample exchange for Mara in Rain Signal.",
++    aiAssist:
++      "Generate a one-page voice card from existing Mara notes, then ask Glen to approve or rewrite the constraints.",
++    linkedItems: ["character_mara", "scene_rain_signal", "lore_city_memory"],
++    tags: ["voice", "character", "bible", "dialogue"],
++  },
++  {
++    id: "task-lucien-ledger-lines",
++    laneId: "drafting",
++    title: "Draft Lucien ledger-room exchange",
++    type: "Dialogue draft",
++    storyArea: "Issue 01 / The Cassette Room",
++    owner: "Glen",
++    priority: "medium",
++    dueLabel: "Next writing pass",
++    statusLabel: "Ready",
++    decisionState: "ready-to-work",
++    summary:
++      "The line 'Do not catalog the chorus alone' is strong, but the scene needs two versions: one restrained archive-keeper version and one more haunted version.",
++    nextStep: "Draft two dialogue options and attach both to the Cassette Room scene for review.",
++    aiAssist:
++      "Prepare two tone variants and preserve the better unresolved ending for collaborator review.",
++    linkedItems: ["scene_cassette_room", "artifact_ledger_page", "artifact_gold_cassette"],
++    tags: ["dialogue", "Lucien", "cassette", "draft"],
++  },
++  {
++    id: "task-ovi-resonance-limit",
++    laneId: "gaps",
++    title: "Clarify Ovi's resonance limit",
++    type: "Lore rule",
++    storyArea: "Character / Ovi Reyes",
++    owner: "Story lead",
++    collaborator: "Glen",
++    priority: "medium",
++    dueLabel: "Before Issue 02 planning",
++    statusLabel: "Needs shape",
++    decisionState: "proposal",
++    summary:
++      "Ovi can amplify hidden city patterns during live sets, but the system needs a clear limit so future story beats do not feel arbitrary.",
++    nextStep: "Propose one power limit, one emotional cost, and one visual cue for review.",
++    aiAssist:
++      "Surface all Ovi notes and suggest three consistent limits that preserve mystery without overexplaining the mythology.",
++    linkedItems: ["character_ovi", "lore_resonance", "artifact_ovi_issue_artwork"],
++    tags: ["Ovi", "resonance", "canon", "limits"],
++  },
++  {
++    id: "task-rain-signal-beat-change",
++    laneId: "review",
++    title: "Review beat change: should the streetlight answer before Ovi appears?",
++    type: "Story beat proposal",
++    storyArea: "Issue 01 / Rain Signal",
++    owner: "Story lead",
++    collaborator: "Glen",
++    priority: "medium",
++    dueLabel: "Review pass",
++    statusLabel: "Proposed",
++    decisionState: "needs-approval",
++    summary:
++      "A suggested beat would let the flickering streetlight answer the cassette before Mara sees Ovi. This may make the city feel more active, but could reveal the mythology too early.",
++    nextStep: "Approve, reject, or mark as alternate beat before storyboard adjustment.",
++    aiAssist:
++      "Summarize the impact on pacing, mystery, and visual continuity, then draft a review note for the story lead.",
++    linkedItems: ["scene_rain_signal", "artifact_broken_speaker", "lore_city_memory"],
++    tags: ["beat", "approval", "storyboard", "pacing"],
++  },
++  {
++    id: "task-ovi-public-copy",
++    laneId: "review",
++    title: "Polish Ovi Artwork public archive copy",
++    type: "Archive copy review",
++    storyArea: "Artifact / Ovi Artwork",
++    owner: "Archive editor",
++    collaborator: "Glen",
++    priority: "low",
++    dueLabel: "Before public archive refresh",
++    statusLabel: "In review",
++    decisionState: "needs-approval",
++    summary:
++      "The copy should feel like a discovered image, not promo language. Keep the mystery while making the artifact understandable to a new visitor.",
++    nextStep: "Approve the public description or request a less explanatory version.",
++    aiAssist:
++      "Rewrite the description in two modes: 'archive card' and 'behind-the-scenes note.'",
++    linkedItems: ["artifact_ovi_issue_artwork", "character_ovi", "scene_underpass_chorus"],
++    tags: ["archive", "public-copy", "Ovi", "review"],
++  },
++  {
++    id: "task-cassette-archive-labels",
++    laneId: "archive-candidate",
++    title: "Label Cassette With Gold Ink for potential public archive use",
++    type: "Artifact intake",
++    storyArea: "Artifact / Cassette With Gold Ink",
++    owner: "Archive editor",
++    priority: "high",
++    dueLabel: "Before archive publish decision",
++    statusLabel: "Candidate",
++    decisionState: "not-final",
++    summary:
++      "This object is a strong public archive candidate, but it needs rights status, spoiler level, transcript confidence, and linked lore reviewed before it can move public.",
++    nextStep: "Complete metadata labels and request final spoiler review.",
++    aiAssist:
++      "Suggest metadata: canon status, spoiler level, visibility, rights note, transcript confidence, and public-use recommendation.",
++    linkedItems: ["artifact_gold_cassette", "lore_gold_ink", "track_gold_ink_chorus"],
++    tags: ["artifact", "metadata", "archive", "spoiler-review"],
++  },
++  {
++    id: "task-storyboard-sheet-candidate",
++    laneId: "archive-candidate",
++    title: "Decide whether Opening Movement Storyboard Sheet can become behind-the-scenes material",
++    type: "Development vault review",
++    storyArea: "Issue 01 / Development Vault",
++    owner: "Art lead",
++    collaborator: "Archive editor",
++    priority: "low",
++    dueLabel: "Later",
++    statusLabel: "Candidate",
++    decisionState: "not-final",
++    summary:
++      "The storyboard sheet is useful for collaborator review now. It may become a public behind-the-scenes artifact later, but only after spoilers and process notes are checked.",
++    nextStep: "Mark internal-only for now and add a review reminder after Issue One preview feedback.",
++    aiAssist:
++      "Create a safe public label and identify any panels that should remain hidden until after release.",
++    linkedItems: ["artifact_vault_storyboard_sheet", "issue_001"],
++    tags: ["storyboard", "vault", "public-candidate", "not-final"],
++  },
++];
++
++export const studioFocus = [
++  {
++    label: "Best next move",
++    value: "Unblock Underpass Chorus frames so Glen can write final dialogue.",
++  },
++  {
++    label: "Most useful gap",
++    value: "Mara's voice rule can be filled now without waiting on art.",
++  },
++  {
++    label: "Review risk",
++    value: "Rain Signal beat change could expose the mythology too early.",
++  },
++  {
++    label: "Archive watch",
++    value: "Gold Ink Cassette is promising, but needs spoiler and rights labels first.",
++  },
++];
++
++export function getTasksForLane(laneId: StudioLaneId) {
++  return studioTasks.filter((task) => task.laneId === laneId);
++}

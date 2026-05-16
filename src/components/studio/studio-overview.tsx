@@ -1,16 +1,20 @@
 import { IssuePanel } from "@/components/studio/issue-panel";
+import { StudioCopilotPanel } from "@/components/studio/studio-copilot-panel";
+import { WorkflowBoard } from "@/components/studio/workflow-board";
 import { SignalFrame } from "@/components/ui/signal-frame";
 import { MetadataLine } from "@/components/ui/metadata-line";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getStudioOverview } from "@/lib/content/queries";
+import type { StudioWorkflowBoardData } from "@/types/studio-workflow";
 
 type StudioOverviewData = ReturnType<typeof getStudioOverview>;
 
 interface StudioOverviewProps {
   data: StudioOverviewData;
+  workflow: StudioWorkflowBoardData;
 }
 
-export function StudioOverview({ data }: StudioOverviewProps) {
+export function StudioOverview({ data, workflow }: StudioOverviewProps) {
   const inventory = [
     ["Scenes", data.scenes.length],
     ["Artifacts", data.artifacts.length],
@@ -28,6 +32,10 @@ export function StudioOverview({ data }: StudioOverviewProps) {
           <div>
             <h1 className="font-display text-5xl leading-tight text-paper md:text-6xl">{data.project.title}</h1>
             <p className="mt-5 max-w-3xl text-lg leading-8 text-paper/74">{data.project.description}</p>
+            <p className="mt-4 max-w-3xl border-l border-ember/40 pl-4 text-sm leading-6 text-ember/82">
+              Studio Mode is the internal workspace for socarengue.studio. This proof uses placeholder workflow data only;
+              public reader/archive pages on socarengue.com remain separate.
+            </p>
           </div>
           <div>
             <MetadataLine label="Signal index" value="archive inventory" />
@@ -61,6 +69,11 @@ export function StudioOverview({ data }: StudioOverviewProps) {
             />
           )}
         </div>
+      </div>
+
+      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_360px]">
+        <WorkflowBoard workflow={workflow} />
+        <StudioCopilotPanel suggestions={workflow.copilotSuggestions} />
       </div>
     </div>
   );

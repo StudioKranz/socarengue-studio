@@ -115,6 +115,13 @@ pnpm build
 
 The public surface is **Reader Mode**. It is designed to be shareable now: cinematic, comic first, and focused on the curated preview at `/preview/issue-one`, with the public archive available at `/archive`.
 
+Domain intent:
+
+- `socarengue.com` is the public reader, preview, and archive site.
+- `socarengue.studio` is the internal Studio workspace.
+
+Do not add a global redirect from `/` to `/studio`. The app uses host-aware routing so `socarengue.studio/` can render Studio Mode while `socarengue.com/` remains the public Reader Mode homepage. `/studio` also remains directly visitable for local development and collaborator review.
+
 Primary public navigation should stay simple:
 
 - `Preview` -> `/preview/issue-one`
@@ -122,6 +129,12 @@ Primary public navigation should stay simple:
 - `Studio` -> `/studio` as a subtle, de-emphasized link
 
 The internal tools are **Studio Mode**. Routes such as `/studio`, `/studio/intake`, and `/studio/issues/the-street-remembers` still work when visited directly, but they are operator-facing and should not be promoted as the primary public experience.
+
+### Placeholder Data Warning
+
+Current Studio workflow tasks, board cards, Copilot suggestions, scene/task examples, and review labels are demo placeholders for product validation. They are not canon and should not be treated as unreleased story material.
+
+Do not commit private story content, unreleased canon, collaborator notes, licensed assets, or reveal-sensitive material unless the repository privacy and publishing decision has been confirmed. Keep workflow proof-of-concept data generic and clearly marked as placeholder.
 
 ## Clean Preview Routine
 
@@ -145,6 +158,8 @@ For Studio Mode review, open the internal routes directly:
 - `http://localhost:3000/studio`
 - `http://localhost:3000/studio/intake`
 - `http://localhost:3000/studio/issues/the-street-remembers`
+
+To verify the host-aware split locally, map or proxy a request with host `socarengue.studio` to the dev server and confirm `/` renders Studio Mode. Normal `localhost:3000/` should continue to show the public Reader Mode homepage.
 
 Do not run `next build` while the dev server is active; restart the dev server after a production build so the local preview uses a clean `.next` manifest.
 
@@ -212,8 +227,10 @@ The prototype currently includes:
 
 - Next.js, TypeScript, and Tailwind foundation
 - typed domain models for the MVP objects
+- typed placeholder Studio workflow data
 - one hardcoded Socarengue seed project
 - landing, studio overview, issue detail, archive, and scene reader routes
+- Studio workflow board and deterministic Copilot/next-step panel
 - soundtrack cue component
 - Supabase-ready query helper boundary using local seed data
 - no Supabase connection, auth, editing, payments, comments, or external APIs

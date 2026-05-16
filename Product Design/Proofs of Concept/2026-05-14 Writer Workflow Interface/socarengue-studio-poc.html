@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Socarengue Studio - Proof of Concept</title>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --panel: #fffdf8;
+      --panel-2: #fbf7ef;
+      --ink: #191714;
+      --muted: #706a62;
+      --line: #e4dbcd;
+      --accent: #c75d33;
+      --accent-2: #355c58;
+      --accent-3: #e7bb55;
+      --ok: #2f7d56;
+      --warn: #a66421;
+      --danger: #9f3c3c;
+      --shadow: 0 18px 55px rgba(41, 30, 18, 0.11);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(231, 187, 85, 0.24), transparent 32rem),
+        radial-gradient(circle at top right, rgba(53, 92, 88, 0.18), transparent 32rem),
+        var(--bg);
+      color: var(--ink);
+      font-family: var(--font);
+    }
+
+    button, input, textarea, select { font-family: inherit; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 260px minmax(720px, 1fr) 360px;
+      min-height: 100vh;
+    }
+
+    aside.sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 20px;
+      border-right: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.72);
+      backdrop-filter: blur(18px);
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 32px;
+      padding: 0 8px;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, var(--accent), #713d2a 62%, var(--accent-2));
+      box-shadow: 0 12px 24px rgba(199, 93, 51, 0.25);
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -0.03em;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    nav { display: grid; gap: 6px; }
+
+    .nav-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      padding: 12px 14px;
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 14px;
+      text-align: left;
+    }
+
+    .nav-item.active, .nav-item:hover {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 10px 28px rgba(41, 30, 18, 0.08);
+    }
+
+    .pill-count {
+      min-width: 24px;
+      height: 22px;
+      padding: 0 7px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      color: var(--accent-2);
+      display: inline-grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid var(--line);
+    }
+
+    .sidebar-card {
+      margin-top: 28px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,0.55);
+    }
+
+    .sidebar-card h3 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .sidebar-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    main {
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      gap: 18px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .search {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.68);
+      border-radius: 18px;
+      padding: 13px 16px;
+      max-width: 640px;
+    }
+
+    .search input {
+      border: 0;
+      background: transparent;
+      outline: 0;
+      width: 100%;
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.68);
+      border: 1px solid var(--line);
+      padding: 8px 10px 8px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #dec08d, #8a5636);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .user strong { display: block; font-size: 13px; }
+    .user span { display: block; color: var(--muted); font-size: 11px; margin-top: 1px; }
+
+    .hero {
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(135deg, rgba(25, 23, 20, .92), rgba(53, 92, 88, .92)),
+        url('data:image/svg+xml;utf8,<svg width="1200" height="500" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="p" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M0 60 L60 0" stroke="rgba(255,255,255,.08)" stroke-width="1"/><circle cx="8" cy="8" r="2" fill="rgba(231,187,85,.3)"/></pattern></defs><rect width="1200" height="500" fill="url(%23p)"/></svg>');
+      color: #fffdf8;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero:after {
+      content: "";
+      position: absolute;
+      right: -80px;
+      top: -80px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      border: 42px solid rgba(231, 187, 85, 0.18);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.72);
+      margin-bottom: 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-3);
+      display: inline-block;
+    }
+
+    .hero h2 {
+      max-width: 760px;
+      margin: 0 0 12px;
+      font-size: clamp(28px, 3vw, 48px);
+      line-height: 1.02;
+      letter-spacing: -0.06em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 690px;
+      color: rgba(255, 253, 248, 0.76);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn {
+      border: 0;
+      cursor: pointer;
+      padding: 11px 15px;
+      border-radius: 14px;
+      font-weight: 750;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: #fffdf8;
+      color: var(--ink);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,.12);
+      color: #fffdf8;
+      border: 1px solid rgba(255,255,255,.18);
+    }
+
+    .btn-dark {
+      background: var(--ink);
+      color: white;
+    }
+
+    .btn-ghost {
+      background: var(--panel-2);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 18px 0 24px;
+    }
+
+    .metric {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.7);
+      border-radius: 20px;
+      padding: 18px;
+      min-height: 108px;
+    }
+
+    .metric span {
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: .03em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .metric strong {
+      display: block;
+      margin: 9px 0 4px;
+      font-size: 30px;
+      letter-spacing: -0.04em;
+    }
+
+    .metric p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin: 26px 0 14px;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.045em;
+    }
+
+    .section-head p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 5px;
+    }
+
+    .tab {
+      border: 0;
+      border-radius: 12px;
+      padding: 8px 12px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      background: var(--ink);
+      color: white;
+    }
+
+    .gaps {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(220px, 1fr));
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .gap-card {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.8);
+      border-radius: 20px;
+      padding: 16px;
+      cursor: pointer;
+      min-height: 178px;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+
+    .gap-card:hover, .gap-card.active {
+      transform: translateY(-2px);
+      border-color: rgba(199, 93, 51, .35);
+      box-shadow: 0 16px 38px rgba(41, 30, 18, 0.12);
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      height: 24px;
+      padding: 0 9px;
+      border-radius: 999px;
+      background: var(--panel-2);
+      color: var(--muted);
+      border: 1px solid var(--line);
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .tag.red { color: var(--danger); background: #f9eeee; border-color: #ead1cf; }
+    .tag.green { color: var(--ok); background: #edf8f1; border-color: #d1e8d8; }
+    .tag.amber { color: var(--warn); background: #fff4e1; border-color: #ead6ad; }
+    .tag.blue { color: var(--accent-2); background: #edf7f5; border-color: #cfe0de; }
+
+    .gap-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      letter-spacing: -0.03em;
+    }
+
+    .gap-card p {
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 13px;
+      margin: 0 0 14px;
+    }
+
+    .mini-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: auto;
+    }
+
+    .faces { display: flex; align-items: center; }
+    .face {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--accent-2);
+      border: 2px solid #fff;
+      margin-left: -7px;
+    }
+    .face:first-child { margin-left: 0; }
+    .face.gold { background: var(--accent-3); color: var(--ink); }
+    .face.orange { background: var(--accent); }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(235px, 1fr));
+      gap: 14px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+    }
+
+    .column {
+      background: rgba(255,255,255,0.5);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 12px;
+      min-height: 390px;
+    }
+
+    .column-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 5px 12px;
+    }
+
+    .column-head h3 {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .045em;
+      color: var(--muted);
+    }
+
+    .task-card {
+      background: #fffdf8;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 8px 22px rgba(41, 30, 18, 0.06);
+      cursor: pointer;
+    }
+
+    .task-card h4 {
+      margin: 8px 0 8px;
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .task-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .task-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+    }
+
+    .right-panel {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 28px 24px;
+      border-left: 1px solid var(--line);
+      background: rgba(255, 253, 248, 0.82);
+      backdrop-filter: blur(18px);
+    }
+
+    .agent {
+      border-radius: var(--radius-xl);
+      background: linear-gradient(180deg, #fffdf8, #fbf7ef);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .agent-head {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(231,187,85,.18), transparent);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .agent-title h2 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -0.035em;
+    }
+
+    .agent-title span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .spark {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: var(--ink);
+      color: var(--accent-3);
+      font-weight: 900;
+    }
+
+    .agent-body { padding: 16px; }
+
+    .suggestion {
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      padding: 14px;
+      background: rgba(255,255,255,.7);
+      margin-bottom: 10px;
+    }
+
+    .suggestion h3 {
+      margin: 0 0 6px;
+      font-size: 14px;
+      letter-spacing: -0.02em;
+    }
+
+    .suggestion p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 12px;
+    }
+
+    .suggestion-actions { display: flex; gap: 7px; flex-wrap: wrap; }
+
+    .mini-btn {
+      border: 1px solid var(--line);
+      background: #fffdf8;
+      color: var(--ink);
+      padding: 7px 9px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .mini-btn.dark { background: var(--ink); color: white; border-color: var(--ink); }
+
+    .askbox {
+      border-top: 1px solid var(--line);
+      padding: 14px;
+      background: rgba(255,255,255,.45);
+    }
+
+    .askbox textarea {
+      width: 100%;
+      min-height: 88px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: #fffdf8;
+      padding: 12px;
+      color: var(--ink);
+      resize: vertical;
+      outline: none;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .askbox .btn { margin-top: 10px; width: 100%; justify-content: center; }
+
+    .upload {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.6);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+    }
+
+    .upload h2 {
+      margin: 0 0 4px;
+      font-size: 17px;
+      letter-spacing: -0.035em;
+    }
+
+    .upload p { margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+    .drop {
+      border: 1.5px dashed #d6c8b7;
+      border-radius: 18px;
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      background: #fffdf8;
+      margin-bottom: 12px;
+    }
+
+    .form-grid { display: grid; gap: 10px; }
+    .field label {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fffdf8;
+      border-radius: 13px;
+      padding: 10px 11px;
+      outline: 0;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .review-drawer {
+      display: none;
+      margin-top: 14px;
+      border: 1px solid rgba(53,92,88,.25);
+      background: #edf7f5;
+      color: var(--accent-2);
+      border-radius: 18px;
+      padding: 14px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .review-drawer.open { display: block; }
+
+    .mobile-note { display: none; }
+
+    @media (max-width: 1220px) {
+      .app { grid-template-columns: 210px minmax(600px, 1fr); }
+      .right-panel {
+        grid-column: 1 / -1;
+        position: relative;
+        height: auto;
+        border-left: 0;
+        border-top: 1px solid var(--line);
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+        gap: 18px;
+      }
+      .upload { margin-top: 0; }
+    }
+
+    @media (max-width: 880px) {
+      .app { display: block; }
+      aside.sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      nav { grid-template-columns: repeat(2, 1fr); }
+      main { padding: 20px; }
+      .topbar { align-items: stretch; flex-direction: column; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .right-panel { display: block; padding: 20px; }
+      .upload { margin-top: 18px; }
+      .mobile-note { display: block; margin: 12px 0; color: var(--muted); font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="mark">S</div>
+        <div>
+          <h1>Socarengue Studio</h1>
+          <span>Story engine + archive workflow</span>
+        </div>
+      </div>
+
+      <nav aria-label="Studio sections">
+        <button class="nav-item active">Today <span class="pill-count">7</span></button>
+        <button class="nav-item">Story Bible <span class="pill-count">12</span></button>
+        <button class="nav-item">Storyboard <span class="pill-count">4</span></button>
+        <button class="nav-item">Dialogue <span class="pill-count">3</span></button>
+        <button class="nav-item">Reviews <span class="pill-count">6</span></button>
+        <button class="nav-item">Public Archive <span class="pill-count">9</span></button>
+      </nav>
+
+      <div class="sidebar-card">
+        <h3>Workspace mode</h3>
+        <p>Proof-of-concept dashboard for a writer. Everything routes toward one of five actions: fill, comment, assign, review, or approve.</p>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Current episode</h3>
+        <p><strong>Ep. 02: The Lighthouse Market</strong><br>Outline locked. Storyboard pass in progress. Dialogue waiting on frames 08-12.</p>
+      </div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <label class="search" aria-label="Search workspace">
+          <span>⌕</span>
+          <input id="globalSearch" placeholder="Search gaps, beats, scenes, lore, artifacts..." />
+        </label>
+        <div class="user">
+          <div class="avatar">GR</div>
+          <div>
+            <strong>Glen Rivera</strong>
+            <span>Writer · Dialogue</span>
+          </div>
+        </div>
+      </div>
+
+      <section class="hero">
+        <div class="eyebrow"><span class="dot"></span> Glen's writer workspace</div>
+        <h2>Start where the story is blocked, not where the files are buried.</h2>
+        <p>Socarengue Studio turns story bible gaps, frame dependencies, dialogue requests, and archive candidates into one visible workflow. The AI copilot can ask for missing context, link Glen to the right page, or draft structured requests for collaborators.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-action="focusDialogue">Show dialogue blockers</button>
+          <button class="btn btn-secondary" data-action="newBeat">Suggest story beat</button>
+          <button class="btn btn-secondary" data-action="uploadArtifact">Upload artifact</button>
+        </div>
+      </section>
+
+      <div class="metrics">
+        <div class="metric"><span>Needs Glen</span><strong>5</strong><p>Dialogue or story note tasks assigned to writer.</p></div>
+        <div class="metric"><span>Blocked by art</span><strong>3</strong><p>Frames or storyboard details required before writing.</p></div>
+        <div class="metric"><span>Review queue</span><strong>6</strong><p>Items waiting for approval or collaborator notes.</p></div>
+        <div class="metric"><span>Archive candidates</span><strong>9</strong><p>Artifacts labeled for possible public lore pages.</p></div>
+      </div>
+
+      <div class="section-head">
+        <div>
+          <h2>Story bible gaps</h2>
+          <p>Each gap is actionable: fill it, comment, assign, request art, or send for review.</p>
+        </div>
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-filter="all">All</button>
+          <button class="tab" data-filter="dialogue">Dialogue</button>
+          <button class="tab" data-filter="art">Art blocked</button>
+          <button class="tab" data-filter="archive">Archive</button>
+        </div>
+      </div>
+
+      <section class="gaps" id="gapList">
+        <article class="gap-card active" data-kind="dialogue" data-title="Dialogue needed: frame set missing" data-tip="Ask art for rough frame order before writing final dialogue. The AI can create a clean request to the storyboard team.">
+          <div class="tag-row"><span class="tag red">Blocked</span><span class="tag blue">Dialogue</span></div>
+          <h3>Dialogue needed: frame set missing</h3>
+          <p>Scene 12 has a locked beat, but frames 08-12 have no final image order yet.</p>
+          <div class="mini-meta"><span>Ep. 02 · Scene 12</span><div class="faces"><span class="face">GR</span><span class="face gold">AM</span></div></div>
+        </article>
+
+        <article class="gap-card" data-kind="art" data-title="New beat may require storyboard adjustment" data-tip="Draft a story beat proposal with the why, the emotional target, and a specific art request for approval.">
+          <div class="tag-row"><span class="tag amber">Needs approval</span><span class="tag blue">Storyboard</span></div>
+          <h3>New beat may require storyboard adjustment</h3>
+          <p>Glen's note suggests a silent reaction beat before the market argument escalates.</p>
+          <div class="mini-meta"><span>Ep. 02 · Beat 05</span><div class="faces"><span class="face">GR</span><span class="face orange">DL</span></div></div>
+        </article>
+
+        <article class="gap-card" data-kind="dialogue" data-title="Character voice rule incomplete" data-tip="Open the character voice page and add two sample lines plus one phrase the character would never use.">
+          <div class="tag-row"><span class="tag amber">Gap</span><span class="tag blue">Voice</span></div>
+          <h3>Character voice rule incomplete</h3>
+          <p>Mateo's comedic register is defined, but his serious register needs examples.</p>
+          <div class="mini-meta"><span>Story Bible · Mateo</span><div class="faces"><span class="face">GR</span></div></div>
+        </article>
+
+        <article class="gap-card" data-kind="archive" data-title="Archive candidate needs labels" data-tip="Label this artifact with source, rights status, canon status, character tags, and whether it can be public-facing.">
+          <div class="tag-row"><span class="tag green">Archive candidate</span><span class="tag amber">Needs labels</span></div>
+          <h3>Archive candidate needs labels</h3>
+          <p>Reference photo has lore value, but public archive metadata is missing.</p>
+          <div class="mini-meta"><span>Lore · Market district</span><div class="faces"><span class="face gold">AM</span><span class="face">GR</span></div></div>
+        </article>
+      </section>
+
+      <div class="section-head">
+        <div>
+          <h2>Workflow board</h2>
+          <p>A lightweight Kanban surface that makes next steps, blockers, and approvals obvious.</p>
+        </div>
+        <button class="btn btn-ghost" id="simulateAI">Run AI triage</button>
+      </div>
+
+      <div class="mobile-note">On smaller screens, the board scrolls sideways to preserve the workflow.</div>
+
+      <section class="board" id="board">
+        <div class="column">
+          <div class="column-head"><h3>Gaps / Intake</h3><span class="pill-count">3</span></div>
+          <article class="task-card" data-task="Fill Mateo serious voice examples"><div class="tag-row"><span class="tag amber">Story bible</span></div><h4>Fill Mateo serious voice examples</h4><p>Add constraints and example lines so dialogue stays consistent later.</p><div class="task-footer"><span>Owner: Glen</span><span>Today</span></div></article>
+          <article class="task-card" data-task="Tag market district reference"><div class="tag-row"><span class="tag green">Archive</span></div><h4>Tag market district reference</h4><p>Needs canon status, rights status, public visibility, and connected pages.</p><div class="task-footer"><span>Owner: Glen</span><span>10 min</span></div></article>
+          <article class="task-card" data-task="Comment on lighthouse folklore"><div class="tag-row"><span class="tag blue">Lore</span></div><h4>Comment on lighthouse folklore</h4><p>Confirm whether old lighthouse story is myth, rumor, or canon.</p><div class="task-footer"><span>Owner: Glen</span><span>Open</span></div></article>
+        </div>
+
+        <div class="column">
+          <div class="column-head"><h3>Needs Input</h3><span class="pill-count">3</span></div>
+          <article class="task-card" data-task="Request frame order for Scene 12"><div class="tag-row"><span class="tag red">Blocked</span><span class="tag blue">Art</span></div><h4>Request frame order for Scene 12</h4><p>Dialogue cannot be locked until storyboard frames 08-12 are sequenced.</p><div class="task-footer"><span>Ask: Art team</span><span>High</span></div></article>
+          <article class="task-card" data-task="Confirm silent reaction beat"><div class="tag-row"><span class="tag amber">Approval</span></div><h4>Confirm silent reaction beat</h4><p>Potential new beat affects pacing and may require one new panel.</p><div class="task-footer"><span>Ask: Director</span><span>Medium</span></div></article>
+          <article class="task-card" data-task="Locate audio reference"><div class="tag-row"><span class="tag blue">Reference</span></div><h4>Locate audio reference</h4><p>Find or request vendor chant cadence for market scene dialogue texture.</p><div class="task-footer"><span>Ask: Archive</span><span>Open</span></div></article>
+        </div>
+
+        <div class="column">
+          <div class="column-head"><h3>Drafting</h3><span class="pill-count">2</span></div>
+          <article class="task-card" data-task="Draft alt line set"><div class="tag-row"><span class="tag blue">Dialogue</span></div><h4>Draft alt line set for market argument</h4><p>Prepare A/B versions: comedic escalation and restrained tension.</p><div class="task-footer"><span>Owner: Glen</span><span>In progress</span></div></article>
+          <article class="task-card" data-task="Beat proposal"><div class="tag-row"><span class="tag amber">Story beat</span></div><h4>Write beat proposal for reaction panel</h4><p>Explain story purpose, art impact, and review criteria.</p><div class="task-footer"><span>Owner: Glen</span><span>Draft</span></div></article>
+        </div>
+
+        <div class="column">
+          <div class="column-head"><h3>Review / Approve</h3><span class="pill-count">3</span></div>
+          <article class="task-card" data-task="Approve revised character note"><div class="tag-row"><span class="tag green">Review</span></div><h4>Approve revised character note</h4><p>New motivation text is ready for writer/director signoff.</p><div class="task-footer"><span>Reviewers: 2</span><span>Ready</span></div></article>
+          <article class="task-card" data-task="Review archive visibility"><div class="tag-row"><span class="tag green">Archive</span></div><h4>Review archive visibility</h4><p>Public lore excerpt needs approval before publishing.</p><div class="task-footer"><span>Approver: Lead</span><span>Ready</span></div></article>
+        </div>
+
+        <div class="column">
+          <div class="column-head"><h3>Archive Candidate</h3><span class="pill-count">2</span></div>
+          <article class="task-card" data-task="Market sign concepts"><div class="tag-row"><span class="tag green">Public candidate</span></div><h4>Market sign concepts</h4><p>Could become a public lore page once source and canon labels are confirmed.</p><div class="task-footer"><span>Labels: 4/6</span><span>Pending</span></div></article>
+          <article class="task-card" data-task="Festival map crop"><div class="tag-row"><span class="tag green">Lore page</span></div><h4>Festival map crop</h4><p>Requires alt text and spoiler status before public archive use.</p><div class="task-footer"><span>Labels: 5/6</span><span>Pending</span></div></article>
+        </div>
+      </section>
+    </main>
+
+    <aside class="right-panel">
+      <section class="agent" aria-label="AI copilot">
+        <div class="agent-head">
+          <div class="agent-title">
+            <h2>Socarengue Copilot</h2>
+            <span>Surfaces next steps from gaps, tasks, and artifact metadata.</span>
+          </div>
+          <div class="spark">✦</div>
+        </div>
+        <div class="agent-body" id="agentBody">
+          <div class="suggestion">
+            <div class="tag-row"><span class="tag red">Best next step</span></div>
+            <h3>Request frame order before drafting final dialogue</h3>
+            <p>Scene 12 is assigned to Glen, but the storyboard sequence is missing. Send a structured ask to art, then draft placeholder dialogue once rough order arrives.</p>
+            <div class="suggestion-actions">
+              <button class="mini-btn dark" data-open-drawer="request">Draft request</button>
+              <button class="mini-btn" data-open-drawer="link">Open Scene 12</button>
+              <button class="mini-btn" data-open-drawer="assign">Assign to art</button>
+            </div>
+          </div>
+          <div class="suggestion">
+            <div class="tag-row"><span class="tag amber">Question</span></div>
+            <h3>Should the reaction beat be silent?</h3>
+            <p>The proposed beat has story value, but it may alter pacing. Ask the director whether this should be a silent panel, an expression change, or a dialogue pause.</p>
+            <div class="suggestion-actions">
+              <button class="mini-btn" data-open-drawer="beat">Create beat proposal</button>
+              <button class="mini-btn" data-open-drawer="comment">Leave comment</button>
+            </div>
+          </div>
+          <div id="drawer" class="review-drawer"></div>
+        </div>
+        <div class="askbox">
+          <textarea id="askInput">What should I work on next if I only have 30 minutes?</textarea>
+          <button class="btn btn-dark" id="askButton">Ask copilot</button>
+        </div>
+      </section>
+
+      <section class="upload" id="uploadPanel">
+        <h2>Upload artifact</h2>
+        <p>Drop reference images, dialogue docs, audio notes, sketches, or lore material. Label once so production and public archive teams can both use it later.</p>
+        <div class="drop">Drop file here or choose from device</div>
+        <div class="form-grid">
+          <div class="field"><label>Artifact title</label><input id="artifactTitle" value="Market vendor chant reference" /></div>
+          <div class="field"><label>Type</label><select><option>Audio reference</option><option>Image reference</option><option>Storyboard sketch</option><option>Dialogue draft</option><option>Lore source</option></select></div>
+          <div class="field"><label>Linked story area</label><input value="Ep. 02 / Market District / Scene 12" /></div>
+          <div class="field"><label>Rights + visibility</label><select><option>Internal only</option><option>Public archive candidate</option><option>Approved public asset</option><option>Needs rights review</option></select></div>
+          <div class="field"><label>Labels</label><input value="market, chant, ambiance, dialogue texture" /></div>
+          <button class="btn btn-dark" id="uploadButton">Save artifact with labels</button>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <script>
+    const gapCards = Array.from(document.querySelectorAll('.gap-card'));
+    const agentBody = document.getElementById('agentBody');
+    const drawer = document.getElementById('drawer');
+
+    function openDrawer(kind, customText) {
+      const copy = {
+        request: '<strong>Draft request to art:</strong><br>Can you provide rough frame order for Ep. 02 / Scene 12 / frames 08-12? Dialogue is blocked until Glen can see who speaks on each beat. A rough sequence is enough for placeholder lines.',
+        link: '<strong>Linked page opened:</strong><br>Scene 12 / Lighthouse Market / Dialogue workspace. Show frame refs, beat notes, character motivations, and current comments.',
+        assign: '<strong>Assignment created:</strong><br>Task routed to storyboard with blocker tag. Glen will be notified when frame order is attached.',
+        beat: '<strong>Beat proposal template:</strong><br>Purpose: give Mateo a silent reaction before escalation. Art impact: likely one panel or expression revision. Review needed: director pacing approval.',
+        comment: '<strong>Comment saved:</strong><br>Glen suggests testing a silent reaction beat before adding new dialogue. Needs director review before storyboard change.',
+        upload: '<strong>Artifact saved:</strong><br>Added labels, linked to Scene 12, and marked as public archive candidate pending rights review.',
+        ai: '<strong>30-minute recommendation:</strong><br>1. Send the frame-order request. 2. Fill Mateo serious voice examples. 3. Label the market reference as internal or public candidate. These unblock three collaborators.'
+      };
+      drawer.innerHTML = customText || copy[kind] || copy.request;
+      drawer.classList.add('open');
+      drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    document.body.addEventListener('click', (event) => {
+      const open = event.target.closest('[data-open-drawer]');
+      if (open) openDrawer(open.dataset.openDrawer);
+
+      const heroAction = event.target.closest('[data-action]');
+      if (heroAction) {
+        if (heroAction.dataset.action === 'focusDialogue') {
+          document.querySelector('[data-filter="dialogue"]').click();
+          document.getElementById('gapList').scrollIntoView({ behavior: 'smooth' });
+        }
+        if (heroAction.dataset.action === 'newBeat') openDrawer('beat');
+        if (heroAction.dataset.action === 'uploadArtifact') document.getElementById('uploadPanel').scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+
+    gapCards.forEach(card => {
+      card.addEventListener('click', () => {
+        gapCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        const title = card.dataset.title;
+        const tip = card.dataset.tip;
+        const html = `
+          <div class="suggestion">
+            <div class="tag-row"><span class="tag blue">Selected gap</span></div>
+            <h3>${title}</h3>
+            <p>${tip}</p>
+            <div class="suggestion-actions">
+              <button class="mini-btn dark" data-open-drawer="request">Generate next step</button>
+              <button class="mini-btn" data-open-drawer="comment">Comment</button>
+              <button class="mini-btn" data-open-drawer="assign">Assign</button>
+            </div>
+          </div>
+          <div id="drawer" class="review-drawer open"><strong>AI context:</strong><br>${tip}</div>
+        `;
+        agentBody.innerHTML = html;
+      });
+    });
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const filter = tab.dataset.filter;
+        gapCards.forEach(card => {
+          const show = filter === 'all' || card.dataset.kind === filter;
+          card.style.display = show ? '' : 'none';
+        });
+      });
+    });
+
+    document.getElementById('askButton').addEventListener('click', () => openDrawer('ai'));
+    document.getElementById('simulateAI').addEventListener('click', () => {
+      const target = document.querySelector('[data-task="Request frame order for Scene 12"]');
+      target.style.outline = '3px solid rgba(199, 93, 51, .35)';
+      openDrawer('ai');
+    });
+    document.getElementById('uploadButton').addEventListener('click', () => openDrawer('upload'));
+  </script>
+</body>
+</html>

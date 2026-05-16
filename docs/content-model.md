@@ -6,6 +6,8 @@ This document is planning guidance, not an implemented schema.
 
 The first prototype should use local typed seed data only. Supabase is the preferred future persistence layer, so interfaces should be shaped to migrate cleanly to Supabase Auth, Supabase Postgres, Supabase Storage, and Row Level Security later.
 
+The Studio workflow proof follows the same rule. Board columns, task cards, owners, blockers, linked records, and Copilot suggestions are typed local placeholder records. They model creator workflow shape only and must not be treated as canon, private story truth, or a persistence schema.
+
 ## Modeling Principles
 
 - Keep creative objects distinct.

@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Socarengue Studio - Collaborator Workflow Board</title>
+  <style>
+    :root {
+      --ink: #05070b;
+      --ink-2: #0c111b;
+      --storm: #17202f;
+      --paper: #d8c7a1;
+      --paper-soft: rgba(216, 199, 161, .68);
+      --paper-faint: rgba(216, 199, 161, .36);
+      --signal: #42d5d9;
+      --signal-soft: rgba(66, 213, 217, .16);
+      --ember: #d6a34a;
+      --ember-soft: rgba(214, 163, 74, .16);
+      --blood: #8f2033;
+      --blood-soft: rgba(143, 32, 51, .18);
+      --line: rgba(216, 199, 161, .14);
+      --line-strong: rgba(216, 199, 161, .22);
+      --shadow: 0 24px 80px rgba(0, 0, 0, .36);
+      --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --display: Georgia, "Times New Roman", serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 18% 6%, rgba(66, 213, 217, .14), transparent 30rem),
+        radial-gradient(circle at 82% 4%, rgba(143, 32, 51, .18), transparent 32rem),
+        linear-gradient(135deg, #05070b 0%, #0b0f18 50%, #05070b 100%);
+      color: #f4ead7;
+      font-family: var(--font);
+    }
+
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      content: "";
+      opacity: .26;
+      background-image:
+        linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, black, transparent 86%);
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(1480px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 0 22px;
+      border-bottom: 1px solid var(--line);
+      color: var(--paper-faint);
+      text-transform: uppercase;
+      letter-spacing: .22em;
+      font-size: .72rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--paper);
+    }
+
+    .sigil {
+      width: 30px;
+      height: 30px;
+      border: 1px solid rgba(214, 163, 74, .45);
+      display: grid;
+      place-items: center;
+      color: var(--ember);
+      background: rgba(214, 163, 74, .08);
+      box-shadow: 0 0 36px rgba(214, 163, 74, .12);
+    }
+
+    .hero {
+      margin-top: 24px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background:
+        linear-gradient(145deg, rgba(14, 20, 32, .92), rgba(5, 7, 11, .84)),
+        radial-gradient(circle at top left, rgba(66, 213, 217, .12), transparent 42%);
+      box-shadow: var(--shadow);
+    }
+
+    .review-ribbon {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(90deg, var(--blood-soft), rgba(5,7,11,.75), var(--signal-soft));
+      color: var(--paper-soft);
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .24em;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.16fr) minmax(340px, .84fr);
+      gap: 48px;
+      padding: clamp(28px, 5vw, 56px);
+    }
+
+    .eyebrow {
+      color: rgba(66, 213, 217, .78);
+      text-transform: uppercase;
+      letter-spacing: .3em;
+      font-size: .76rem;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--display);
+      margin: 0;
+      font-weight: 500;
+    }
+
+    h1 {
+      margin-top: 18px;
+      max-width: 920px;
+      font-size: clamp(3.2rem, 7vw, 7.2rem);
+      line-height: .94;
+      color: var(--paper);
+    }
+
+    .lede {
+      max-width: 760px;
+      margin: 24px 0 0;
+      font-size: 1.08rem;
+      line-height: 1.8;
+      color: rgba(216, 199, 161, .72);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 30px;
+    }
+
+    .metric, .panel, .lane, .card, .mini-card {
+      border: 1px solid var(--line);
+      background: rgba(216, 199, 161, .045);
+      border-radius: 12px;
+    }
+
+    .metric { padding: 16px; }
+    .metric strong {
+      display: block;
+      color: var(--ember);
+      font-family: var(--display);
+      font-size: 2.2rem;
+      line-height: 1;
+      font-weight: 500;
+    }
+    .metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--paper-faint);
+      font-size: .64rem;
+      text-transform: uppercase;
+      letter-spacing: .2em;
+    }
+
+    .login-panel { padding: 24px; }
+    .login-panel h2 { margin-top: 12px; font-size: 2.6rem; color: var(--paper); }
+    .login-panel p { color: var(--paper-soft); line-height: 1.7; }
+
+    .focus-stack { display: grid; gap: 14px; margin-top: 24px; }
+    .focus-item { border-left: 1px solid rgba(66, 213, 217, .42); padding-left: 16px; }
+    .focus-item b {
+      display: block;
+      color: rgba(66, 213, 217, .72);
+      font-size: .66rem;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+    .focus-item span { display: block; margin-top: 6px; color: rgba(216, 199, 161, .72); line-height: 1.55; }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 22px;
+      margin-top: 22px;
+      align-items: start;
+    }
+
+    .board-wrap {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(5, 7, 11, .52);
+      box-shadow: 0 18px 52px rgba(0, 0, 0, .2);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 22px;
+      padding: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+    .section-head h2 { margin-top: 8px; font-size: 2.5rem; color: var(--paper); }
+    .section-head p { max-width: 540px; margin: 0; color: rgba(216, 199, 161, .54); line-height: 1.65; }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(274px, 1fr));
+      gap: 14px;
+      padding: 16px;
+      overflow-x: auto;
+    }
+
+    .lane { min-width: 274px; background: rgba(216, 199, 161, .035); }
+    .lane-head { min-height: 150px; padding: 16px; border-bottom: 1px solid var(--line); border-radius: 12px 12px 0 0; }
+    .lane.gaps .lane-head { background: linear-gradient(to bottom, rgba(214,163,74,.18), transparent); }
+    .lane.input .lane-head { background: linear-gradient(to bottom, rgba(143,32,51,.23), transparent); }
+    .lane.drafting .lane-head { background: linear-gradient(to bottom, rgba(66,213,217,.17), transparent); }
+    .lane.review .lane-head { background: linear-gradient(to bottom, rgba(136,116,255,.13), transparent); }
+    .lane.archive .lane-head { background: linear-gradient(to bottom, rgba(216,199,161,.12), transparent); }
+    .lane-title { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    .lane-title h3 { font-size: 1.7rem; color: var(--paper); }
+    .count { border: 1px solid var(--line); border-radius: 999px; color: var(--paper-faint); padding: 4px 9px; font-size: .8rem; }
+    .lane-head p { color: rgba(216,199,161,.48); line-height: 1.55; font-size: .82rem; }
+    .cards { display: grid; gap: 12px; padding: 12px; }
+
+    .card { padding: 15px; background: rgba(5, 7, 11, .68); transition: border-color .18s ease, transform .18s ease, background .18s ease; }
+    .card:hover { border-color: rgba(66,213,217,.44); background: rgba(23,32,47,.64); transform: translateY(-2px); }
+    .card-top { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    .type { color: rgba(66,213,217,.64); font-size: .62rem; text-transform: uppercase; letter-spacing: .18em; }
+    .card h4 { margin: 8px 0 0; color: var(--paper); font-family: var(--display); font-size: 1.25rem; line-height: 1.18; font-weight: 500; }
+    .priority { flex: 0 0 auto; border-radius: 999px; border: 1px solid var(--line); padding: 5px 9px; font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; }
+    .priority.high { border-color: rgba(143,32,51,.7); color: #ffdbdf; background: var(--blood-soft); }
+    .priority.medium { border-color: rgba(214,163,74,.55); color: var(--ember); background: var(--ember-soft); }
+    .priority.low { color: rgba(216,199,161,.6); background: rgba(216,199,161,.06); }
+    .summary { color: rgba(216,199,161,.68); font-size: .9rem; line-height: 1.65; }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+    .meta { border: 1px solid rgba(216,199,161,.1); border-radius: 8px; padding: 10px; background: rgba(216,199,161,.04); }
+    .meta b { display: block; font-size: .58rem; color: rgba(216,199,161,.36); letter-spacing: .16em; text-transform: uppercase; }
+    .meta span { display: block; margin-top: 4px; color: rgba(216,199,161,.78); font-size: .8rem; }
+    .blocker, .next { margin-top: 10px; border-radius: 8px; padding: 10px; font-size: .8rem; line-height: 1.55; }
+    .blocker { border: 1px solid rgba(143,32,51,.34); background: var(--blood-soft); color: rgba(255,219,223,.84); }
+    .next { border: 1px solid rgba(66,213,217,.24); background: var(--signal-soft); color: rgba(244,234,215,.72); }
+    .blocker b, .next b { display: block; margin-bottom: 4px; font-size: .58rem; text-transform: uppercase; letter-spacing: .18em; opacity: .75; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .tag { border: 1px solid rgba(216,199,161,.1); border-radius: 999px; padding: 4px 8px; color: rgba(216,199,161,.44); font-size: .64rem; text-transform: uppercase; letter-spacing: .12em; }
+
+    .side { display: grid; gap: 18px; }
+    .panel { padding: 22px; background: rgba(5,7,11,.56); }
+    .panel.copilot { border-color: rgba(66,213,217,.22); background: rgba(66,213,217,.08); box-shadow: 0 0 48px rgba(66,213,217,.12); }
+    .panel h2 { margin-top: 10px; font-size: 2.2rem; color: var(--paper); }
+    .panel p { color: rgba(216,199,161,.68); line-height: 1.65; }
+    .action, .label-row { border: 1px solid rgba(216,199,161,.12); border-radius: 10px; background: rgba(5,7,11,.48); padding: 12px; }
+    .action { margin-top: 10px; color: rgba(216,199,161,.66); line-height: 1.55; }
+    .action b { display: block; margin-bottom: 5px; color: rgba(66,213,217,.68); font-size: .65rem; text-transform: uppercase; letter-spacing: .17em; }
+    .label-row { display: flex; justify-content: space-between; gap: 16px; margin-top: 8px; color: rgba(216,199,161,.72); }
+    .label-row span:first-child { color: rgba(216,199,161,.42); }
+
+    .footer-note { margin-top: 22px; color: rgba(216,199,161,.36); font-size: .82rem; line-height: 1.7; }
+
+    @media (max-width: 1120px) {
+      .hero-grid, .main-grid { grid-template-columns: 1fr; }
+      .board { grid-template-columns: repeat(5, minmax(286px, 320px)); }
+    }
+
+    @media (max-width: 760px) {
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .hero-grid { padding: 24px; }
+      .metrics { grid-template-columns: 1fr 1fr; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="sigil">S</span><span>Socarengue Studio</span></div>
+      <span>Collaborator review link / Studio Mode</span>
+    </header>
+
+    <section class="hero">
+      <div class="review-ribbon">Review prototype / not a final product decision</div>
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Writer workflow / proof of concept</div>
+          <h1>Make the next creative move obvious.</h1>
+          <p class="lede">A clean Socarengue Studio view where Glen can see story bible gaps, blocked dialogue, approval requests, and archive candidates without digging through files.</p>
+          <div class="metrics">
+            <div class="metric"><strong>4</strong><span>Glen-related cards</span></div>
+            <div class="metric"><strong>1</strong><span>Blocked item</span></div>
+            <div class="metric"><strong>3</strong><span>High priority</span></div>
+            <div class="metric"><strong>2</strong><span>Archive candidates</span></div>
+          </div>
+        </div>
+        <aside class="panel login-panel">
+          <div class="eyebrow">Glen logs in</div>
+          <h2>Writer view</h2>
+          <p>Current context: <b>Socarengue</b>, <b>Issue 01: The Street Remembers</b>. The system should show what Glen can draft now, what is blocked by frames, and what needs review before it becomes canon.</p>
+          <div class="focus-stack">
+            <div class="focus-item"><b>Best next move</b><span>Unblock Underpass Chorus frames so Glen can write final dialogue.</span></div>
+            <div class="focus-item"><b>Most useful gap</b><span>Mara's voice rule can be filled now without waiting on art.</span></div>
+            <div class="focus-item"><b>Review risk</b><span>Rain Signal beat change could expose the mythology too early.</span></div>
+            <div class="focus-item"><b>Archive watch</b><span>Gold Ink Cassette is promising, but needs spoiler and rights labels first.</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <main class="main-grid">
+      <section class="board-wrap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Workflow board</div>
+            <h2>Gap -> input -> draft -> review -> archive</h2>
+          </div>
+          <p>The lanes are intentionally production-specific. They expose creative dependency, not just generic task status.</p>
+        </div>
+        <div class="board">
+          <section class="lane gaps">
+            <div class="lane-head"><div class="lane-title"><h3>Gaps / Intake</h3><span class="count">2</span></div><p>Story bible holes, untriaged uploads, or questions that need shape.</p></div>
+            <div class="cards">
+              <article class="card"><div class="card-top"><div><div class="type">Story bible gap</div><h4>Define Mara's voice rule before new scene dialogue</h4></div><span class="priority high">High</span></div><p class="summary">Mara notices rhythm in broken infrastructure, but the bible needs a usable dialogue rule.</p><div class="meta-grid"><div class="meta"><b>Owner</b><span>Glen</span></div><div class="meta"><b>Due</b><span>This week</span></div></div><div class="next"><b>Next step</b>Write three voice constraints and one sample exchange for Mara in Rain Signal.</div><div class="tags"><span class="tag">voice</span><span class="tag">character</span><span class="tag">bible</span></div></article>
+              <article class="card"><div class="card-top"><div><div class="type">Lore rule</div><h4>Clarify Ovi's resonance limit</h4></div><span class="priority medium">Medium</span></div><p class="summary">Ovi can amplify hidden city patterns, but the system needs a clear limit so future story beats do not feel arbitrary.</p><div class="meta-grid"><div class="meta"><b>Owner</b><span>Story lead</span></div><div class="meta"><b>Due</b><span>Before Issue 02</span></div></div><div class="next"><b>Next step</b>Propose one power limit, one emotional cost, and one visual cue for review.</div><div class="tags"><span class="tag">Ovi</span><span class="tag">resonance</span><span class="tag">canon</span></div></article>
+            </div>
+          </section>
+
+          <section class="lane input">
+            <div class="lane-head"><div class="lane-title"><h3>Needs Input</h3><span class="count">1</span></div><p>Blocked until another collaborator, frame order, or approval note arrives.</p></div>
+            <div class="cards">
+              <article class="card"><div class="card-top"><div><div class="type">Dialogue dependency</div><h4>Underpass Chorus dialogue is blocked by missing frame order</h4></div><span class="priority high">High</span></div><p class="summary">Glen can sketch the emotional rhythm, but final line breaks depend on whether the poster wall, rail tap, and city response are one beat or three frames.</p><div class="meta-grid"><div class="meta"><b>Owner</b><span>Glen</span></div><div class="meta"><b>Due</b><span>Before dialogue pass</span></div></div><div class="blocker"><b>Blocker</b>Needs rough order for frames 08-12 before final call-and-response dialogue can be written.</div><div class="next"><b>Next step</b>Request a rough frame sequence from storyboard and attach it to the scene workspace.</div><div class="tags"><span class="tag">dialogue</span><span class="tag">storyboard</span><span class="tag">blocked</span></div></article>
+            </div>
+          </section>
+
+          <section class="lane drafting">
+            <div class="lane-head"><div class="lane-title"><h3>Drafting</h3><span class="count">1</span></div><p>Ready for a writer, artist, or archive editor to move now.</p></div>
+            <div class="cards">
+              <article class="card"><div class="card-top"><div><div class="type">Dialogue draft</div><h4>Draft Lucien ledger-room exchange</h4></div><span class="priority medium">Medium</span></div><p class="summary">The line “Do not catalog the chorus alone” is strong, but the scene needs two versions: restrained and haunted.</p><div class="meta-grid"><div class="meta"><b>Owner</b><span>Glen</span></div><div class="meta"><b>Due</b><span>Next writing pass</span></div></div><div class="next"><b>Next step</b>Draft two dialogue options and attach both to The Cassette Room for review.</div><div class="tags"><span class="tag">dialogue</span><span class="tag">Lucien</span><span class="tag">cassette</span></div></article>
+            </div>
+          </section>
+
+          <section class="lane review">
+            <div class="lane-head"><div class="lane-title"><h3>Review / Approve</h3><span class="count">2</span></div><p>Needs a decision before becoming canon, production direction, or public copy.</p></div>
+            <div class="cards">
+              <article class="card"><div class="card-top"><div><div class="type">Story beat proposal</div><h4>Should the streetlight answer before Ovi appears?</h4></div><span class="priority medium">Medium</span></div><p class="summary">This may make the city feel more active, but could reveal the mythology too early.</p><div class="meta-grid"><div class="meta"><b>Owner</b><span>Story lead</span></div><div class="meta"><b>Due</b><span>Review pass</span></div></div><div class="next"><b>Next step</b>Approve, reject, or mark as alternate before storyboard adjustment.</div><div class="tags"><span class="tag">beat</span><span class="tag">approval</span><span class="tag">pacing</span></div></article>
+              <article class="card"><div class="card-top"><div><div class="type">Archive copy review</div><h4>Polish Ovi Artwork public archive copy</h4></div><span class="priority low">Low</span></div><p class="summary">The copy should feel like a discovered image, not promo language.</p><div class="meta-grid"><div class="meta"><b>Owner</b><span>Archive editor</span></div><div class="meta"><b>Due</b><span>Before archive refresh</span></div></div><div class="next"><b>Next step</b>Approve the public description or request a less explanatory version.</div><div class="tags"><span class="tag">archive</span><span class="tag">public-copy</span><span class="tag">Ovi</span></div></article>
+            </div>
+          </section>
+
+          <section class="lane archive">
+            <div class="lane-head"><div class="lane-title"><h3>Archive Candidate</h3><span class="count">2</span></div><p>Potential public-facing lore, artifact, or behind-the-scenes material.</p></div>
+            <div class="cards">
+              <article class="card"><div class="card-top"><div><div class="type">Artifact intake</div><h4>Label Cassette With Gold Ink for potential public archive use</h4></div><span class="priority high">High</span></div><p class="summary">Strong public archive candidate, but needs rights status, spoiler level, transcript confidence, and linked lore reviewed.</p><div class="meta-grid"><div class="meta"><b>Owner</b><span>Archive editor</span></div><div class="meta"><b>Due</b><span>Before publish decision</span></div></div><div class="next"><b>Next step</b>Complete metadata labels and request final spoiler review.</div><div class="tags"><span class="tag">artifact</span><span class="tag">metadata</span><span class="tag">spoiler-review</span></div></article>
+              <article class="card"><div class="card-top"><div><div class="type">Development vault review</div><h4>Can Opening Movement Storyboard Sheet become behind-the-scenes material?</h4></div><span class="priority low">Low</span></div><p class="summary">Useful for collaborator review now; maybe public later after spoilers and process notes are checked.</p><div class="meta-grid"><div class="meta"><b>Owner</b><span>Art lead</span></div><div class="meta"><b>Due</b><span>Later</span></div></div><div class="next"><b>Next step</b>Mark internal-only for now and review after Issue One preview feedback.</div><div class="tags"><span class="tag">storyboard</span><span class="tag">vault</span><span class="tag">not-final</span></div></article>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="panel copilot">
+          <div class="eyebrow">Socarengue Copilot</div>
+          <h2>Suggested next action</h2>
+          <p>Glen should not start final Underpass dialogue yet. Ask storyboard for frame timing, then draft the call-and-response once the reveal is sequenced.</p>
+          <div class="action"><b>Request detail</b>Ask art whether frames 08-12 are one continuous reveal or three beats.</div>
+          <div class="action"><b>Open source</b>Link directly to Underpass Chorus, Torn Underpass Poster, and the soundtrack cue.</div>
+          <div class="action"><b>Safe draft</b>Let Glen draft placeholder rhythm lines marked non-canon until frames land.</div>
+        </section>
+        <section class="panel">
+          <div class="eyebrow">Artifact upload labels</div>
+          <h2>Public archive readiness</h2>
+          <div class="label-row"><span>Visibility</span><span>Internal / Candidate / Public</span></div>
+          <div class="label-row"><span>Canon</span><span>Draft / Canon / Reference</span></div>
+          <div class="label-row"><span>Rights</span><span>Owned / Needs review</span></div>
+          <div class="label-row"><span>Spoiler</span><span>None / Mild / Major</span></div>
+          <div class="label-row"><span>Linked to</span><span>Scene, lore, track, issue</span></div>
+        </section>
+        <p class="footer-note">This page is meant to live as an internal review surface. It is a reference for collaborators, not a final interface decision or a canon source.</p>
+      </aside>
+    </main>
+  </div>
+</body>
+</html>
